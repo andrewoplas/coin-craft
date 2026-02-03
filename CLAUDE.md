@@ -249,12 +249,14 @@ current_balance = initial_balance
 
 Update this section every time you start or complete a sprint.
 
-**Active Sprint:** Sprint 2 — App Shell + Navigation
+**Active Sprint:** Sprint 3 — Core — Quick Add Transaction
 **Phase:** 1
 **Status:** Not started
-**Completed Sprints:** Sprint 0, Sprint 1
+**Completed Sprints:** Sprint 0, Sprint 1, Sprint 2
 
 ### Sprint Progress Log
 **Sprint 0 — 2026-02-04** — Project foundation complete. Next.js 14+ with App Router, TypeScript strict mode, Tailwind CSS, and shadcn/ui configured. Database schema created with 11 tables (accounts, transactions, categories, allocations, user profiles, gamification). RLS policies applied. Default categories and achievements seeded. Drizzle ORM connected to Supabase Postgres. Module system types defined. Utility functions (money formatting, date helpers, character configs) in place. Build and typecheck passing clean.
 
 **Sprint 1 — 2026-02-04** — Authentication and onboarding flow complete. Supabase Auth integrated with email/password signup and login. Middleware protecting app routes. Clean branded login/signup pages. Character selection with 6 characters (3 available, 3 coming soon). Interactive character cards with hover expansion. Help-me-choose quiz with 4 questions recommending best character. Contextual setup flow creating user profile, activating modules, and adding accounts. Full flow: signup → character select/quiz → setup → dashboard.
+
+**Sprint 2 — 2026-02-04** — App shell and dynamic navigation complete. Module registry system built with getActiveRoutes(), getActiveWidgets(), getActiveFormExtensions(). Manifests created for core, statistics, envelope, and goals modules. Responsive sidebar with CoinCraft logo, collapsible on tablet, icon-only mode. Active route highlighting with character accent colors. Mobile bottom nav with Dashboard, Transactions, Quick Add FAB, Stats, More drawer. All placeholder pages created: Dashboard (with character greeting), Transactions, Accounts, Categories, Statistics, Settings, Envelopes, Goals. Navigation dynamically shows/hides based on user's active modules from database.

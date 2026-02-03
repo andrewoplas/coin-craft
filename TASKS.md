@@ -64,24 +64,24 @@
 ---
 
 ## Sprint 2: App Shell + Navigation
-- [ ] Create app layout (`app/(app)/layout.tsx`) with responsive sidebar
-- [ ] Sidebar shows: CoinCraft logo, navigation items built from module registry
-- [ ] Core nav items always present: Dashboard, Transactions, Accounts
-- [ ] Module nav items appear/disappear based on active modules (read from user_modules)
-- [ ] Utility items at bottom: Settings
-- [ ] Active route highlighting
-- [ ] Mobile: bottom navigation bar with 5 items (Dashboard, Transactions, + Quick Add, Stats, More)
-- [ ] "More" opens drawer with remaining nav items
-- [ ] Tablet: collapsible sidebar (icon-only when collapsed)
-- [ ] Quick Add FAB button: bottom-right on desktop, center of bottom nav on mobile
-- [ ] Create module registry (`src/modules/registry.ts`) that reads active modules and provides: getActiveRoutes(), getActiveWidgets(), getActiveFormExtensions()
-- [ ] Create core module manifest (`src/modules/core/manifest.ts`)
-- [ ] Create statistics module manifest (`src/modules/statistics/manifest.ts`)
-- [ ] Create envelope module manifest (`src/modules/envelope/manifest.ts`)
-- [ ] Create goals module manifest (`src/modules/goals/manifest.ts`)
-- [ ] Create placeholder pages for: Dashboard, Transactions, Accounts, Statistics, Settings, Envelopes, Goals
-- [ ] Character accent color applied to UI (sidebar accent, FAB color) based on user's character
-- [ ] Verify: Navigation works on desktop, tablet, mobile. Module routes appear/hide based on active modules.
+- [x] Create app layout (`app/(app)/layout.tsx`) with responsive sidebar
+- [x] Sidebar shows: CoinCraft logo, navigation items built from module registry
+- [x] Core nav items always present: Dashboard, Transactions, Accounts
+- [x] Module nav items appear/disappear based on active modules (read from user_modules)
+- [x] Utility items at bottom: Settings
+- [x] Active route highlighting
+- [x] Mobile: bottom navigation bar with 5 items (Dashboard, Transactions, + Quick Add, Stats, More)
+- [x] "More" opens drawer with remaining nav items
+- [x] Tablet: collapsible sidebar (icon-only when collapsed)
+- [x] Quick Add FAB button: bottom-right on desktop, center of bottom nav on mobile
+- [x] Create module registry (`src/modules/registry.ts`) that reads active modules and provides: getActiveRoutes(), getActiveWidgets(), getActiveFormExtensions()
+- [x] Create core module manifest (`src/modules/core/manifest.ts`)
+- [x] Create statistics module manifest (`src/modules/statistics/manifest.ts`)
+- [x] Create envelope module manifest (`src/modules/envelope/manifest.ts`)
+- [x] Create goals module manifest (`src/modules/goals/manifest.ts`)
+- [x] Create placeholder pages for: Dashboard, Transactions, Accounts, Statistics, Settings, Envelopes, Goals
+- [x] Character accent color applied to UI (sidebar accent, FAB color) based on user's character
+- [x] Verify: Navigation works on desktop, tablet, mobile. Module routes appear/hide based on active modules.
 
 **Acceptance:** `npm run check` passes with zero errors. Full app shell with dynamic navigation. Character theming visible. Responsive across breakpoints.
 

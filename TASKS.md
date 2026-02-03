@@ -39,25 +39,25 @@
 ---
 
 ## Sprint 1: Auth + Onboarding Shell
-- [ ] Set up Supabase Auth with email/password signup and login
-- [ ] Create login page (`app/(auth)/login/page.tsx`) — clean, branded with CoinCraft name
-- [ ] Create signup page (`app/(auth)/signup/page.tsx`)
-- [ ] Auth middleware: protect all `(app)` routes, redirect unauthenticated to login
-- [ ] On signup, create `user_profiles` row with default settings
-- [ ] Create character select page (`app/(auth)/onboarding/page.tsx`)
-- [ ] Display 6 character cards: Observer, Planner, Saver (active), Warrior, Hustler, Team (coming soon, grayed out)
-- [ ] Each card shows: emoji icon, name, tagline, short description
-- [ ] Hovering/clicking active card shows expanded detail with dashboard preview mockup
-- [ ] "Help me choose" button at bottom
-- [ ] Create quiz page (`app/(auth)/onboarding/quiz/page.tsx`) with 4 questions from SPEC.md
-- [ ] Quiz scores answers and recommends a character
-- [ ] After character selection, route to setup flow
-- [ ] Create setup page (`app/(auth)/onboarding/setup/page.tsx`) — contextual steps based on character
-- [ ] **Observer setup:** Add accounts → Review categories → Done
-- [ ] **Planner setup:** Add accounts → Review categories → Create envelopes with amounts → Done
-- [ ] **Saver setup:** Add accounts → Review categories → Create first goal → Done
-- [ ] On setup complete: save character_id to profile, activate character's modules, apply default dashboard layout, redirect to dashboard
-- [ ] Verify: Full signup → character select → setup → dashboard flow works
+- [x] Set up Supabase Auth with email/password signup and login
+- [x] Create login page (`app/(auth)/login/page.tsx`) — clean, branded with CoinCraft name
+- [x] Create signup page (`app/(auth)/signup/page.tsx`)
+- [x] Auth middleware: protect all `(app)` routes, redirect unauthenticated to login
+- [x] On signup, create `user_profiles` row with default settings
+- [x] Create character select page (`app/(auth)/onboarding/page.tsx`)
+- [x] Display 6 character cards: Observer, Planner, Saver (active), Warrior, Hustler, Team (coming soon, grayed out)
+- [x] Each card shows: emoji icon, name, tagline, short description
+- [x] Hovering/clicking active card shows expanded detail with dashboard preview mockup
+- [x] "Help me choose" button at bottom
+- [x] Create quiz page (`app/(auth)/onboarding/quiz/page.tsx`) with 4 questions from SPEC.md
+- [x] Quiz scores answers and recommends a character
+- [x] After character selection, route to setup flow
+- [x] Create setup page (`app/(auth)/onboarding/setup/page.tsx`) — contextual steps based on character
+- [x] **Observer setup:** Add accounts → Review categories → Done
+- [x] **Planner setup:** Add accounts → Review categories → Create envelopes with amounts → Done
+- [x] **Saver setup:** Add accounts → Review categories → Create first goal → Done
+- [x] On setup complete: save character_id to profile, activate character's modules, apply default dashboard layout, redirect to dashboard
+- [x] Verify: Full signup → character select → setup → dashboard flow works
 
 **Acceptance:** `npm run check` passes with zero errors. User can sign up, pick a character (or take quiz), complete setup, and land on dashboard. Returning users go straight to dashboard.
 

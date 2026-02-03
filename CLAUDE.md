@@ -23,6 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **State:** Zustand (client-side state for dashboard, modules, UI)
 - **Charts:** Recharts
 - **Dates:** date-fns
+- **Testing:** Vitest (unit/integration), Playwright (E2E), Testing Library
 - **Deploy:** Vercel
 
 ---
@@ -91,17 +92,107 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## Verification Rules
+
+**CRITICAL: Run `npm run check` after every task.** Not after every sprint — after every single task. This catches errors early before they compound.
+
+The `npm run check` command runs in sequence:
+1. `npm run lint` — ESLint checks
+2. `npm run typecheck` — TypeScript strict type checking (`tsc --noEmit`)
+3. `npm run build` — Next.js production build
+
+### Workflow per task:
+1. Mark task `[~]` in TASKS.md
+2. Implement the task
+3. Run `npm run check`
+4. If errors → fix them → run `npm run check` again → repeat until zero errors
+5. Mark task `[x]` in TASKS.md
+6. Move to next task
+
+**Never skip verification.** Never leave lint warnings or type errors for later. Every task must result in a clean `npm run check` before moving on.
+
+**If `npm run check` is not yet available** (early in Sprint 0 before package.json exists), skip verification for those initial setup tasks. Once the check script is configured, verify everything from that point forward.
+
+---
+
+## Testing Strategy
+
+**CRITICAL: All implementations must include automated tests. No manual testing required.**
+
+### Test Levels
+
+**Unit Tests (Vitest)**
+- All utility functions (`src/lib/`)
+- Formatting functions (money, dates)
+- Helper functions and constants
+- Module manifest validation
+- Coverage target: 90%+
+
+**Integration Tests (Vitest)**
+- Server actions (`src/server/actions/`)
+- Database queries (`src/server/queries/`)
+- Module registry functions
+- Auth flows
+- Test against real Supabase (test project)
+
+**E2E Tests (Playwright)**
+- Critical user flows (auth, onboarding, Quick Add)
+- Character selection and module activation
+- Transaction creation (expense, income, transfer)
+- Dashboard and widget rendering
+- Responsive design (mobile, tablet, desktop)
+- Character-specific theming
+- All module features
+
+### Testing Rules
+
+**Every feature must have:**
+1. Unit tests for all new utility functions
+2. Integration tests for all server actions and queries
+3. E2E tests for all user-facing flows
+4. Tests must pass before considering implementation complete
+
+**Test file locations:**
+- Unit tests: `src/lib/__tests__/`
+- Integration tests: `src/server/__tests__/`
+- E2E tests: `e2e/`
+- Component tests: co-located `__tests__/` folders
+
+**CI/CD:**
+- All tests run on every commit
+- E2E tests run in headless mode
+- Block merge if any test fails
+- Run against Supabase test project
+
+**Test Data:**
+- Use factories/fixtures for test data
+- Seed test database before E2E runs
+- Clean up after each test
+- Never use production data
+
+---
+
 ## Common Commands
 
 ```bash
 npm run dev                      # Start dev server
 npm run build                    # Production build
-npm run lint                     # Run linter
+npm run lint                     # Run ESLint
+npm run typecheck                # Run TypeScript type checking (tsc --noEmit)
+npm run check                    # Run ALL checks: lint + typecheck + build
+
+# Testing
+npm run test                     # Run all unit + integration tests
+npm run test:watch               # Run tests in watch mode
+npm run test:coverage            # Run tests with coverage report
+npm run test:e2e                 # Run Playwright E2E tests
+npm run test:e2e:ui              # Run E2E tests with UI
+npm run test:all                 # Run all tests (unit + integration + E2E)
 
 # Database (Drizzle + Supabase)
-npm run drizzle-kit generate     # Generate migration from schema changes
-npm run drizzle-kit migrate      # Apply migrations
-npm run drizzle-kit studio       # Open Drizzle Studio (database GUI)
+npx drizzle-kit generate         # Generate migration from schema changes
+npx drizzle-kit migrate          # Apply migrations
+npx drizzle-kit studio           # Open Drizzle Studio (database GUI)
 npx tsx src/db/seed.ts           # Run seed script
 
 # Supabase (if using local dev)
@@ -109,6 +200,8 @@ npx supabase start               # Start local Supabase
 npx supabase stop                # Stop local Supabase
 npx supabase db reset            # Reset local database
 ```
+
+---
 
 ## Key Architecture Concepts
 
@@ -152,14 +245,15 @@ current_balance = initial_balance
 
 ---
 
-Current Sprint
+## Current Sprint
 
 Update this section every time you start or complete a sprint.
 
-Active Sprint: Sprint 0 — Project Setup
-Phase: 1
-Status: Not started
-Completed Sprints: None
-Sprint Progress Log
+**Active Sprint:** Sprint 0 — Project Setup
+**Phase:** 1
+**Status:** Not started
+**Completed Sprints:** None
+
+### Sprint Progress Log
 <!-- Append each sprint completion here -->
 <!-- Format: Sprint X — [date] — Summary of what was built -->

@@ -5,7 +5,9 @@
 > - `- [~]` = In Progress (currently being worked on)
 > - `- [x]` = Complete (done and verified)
 >
-> **Instructions for Claude Code:** Work through sprints in order. Before starting a task, mark it `[~]`. When done, mark it `[x]`. Complete one sprint fully before moving to the next. After each sprint, verify acceptance criteria, then update the Current Sprint section in CLAUDE.md. Always reference SPEC.md for product details and PLAN.md for architecture decisions.
+> **Verification Rule:** After completing each task, run `npm run check` (which runs lint + typecheck + build). Fix ALL errors before marking the task [x] and moving to the next task. Never leave broken code behind.
+>
+> **Instructions for Claude Code:** Work through sprints in order. Before starting a task, mark it `[~]`. Implement it. Run `npm run check` to verify zero errors. Fix any errors. Then mark it `[x]`. Complete one sprint fully before moving to the next. After each sprint, verify acceptance criteria, then update the Current Sprint section in CLAUDE.md. Always reference SPEC.md for product details and PLAN.md for architecture decisions.
 
 ---
 
@@ -19,6 +21,7 @@
 - [ ] Install Drizzle ORM and configure to connect to Supabase Postgres
 - [ ] Install and configure Supabase JS client (browser + server helpers)
 - [ ] Install Zustand, Recharts, date-fns
+- [ ] Configure ESLint (extend Next.js defaults), Prettier, and add scripts to package.json: `"lint": "next lint"`, `"typecheck": "tsc --noEmit"`, `"check": "npm run lint && npm run typecheck && npm run build"`
 - [ ] Create `drizzle.config.ts` pointing to Supabase Postgres
 - [ ] Create database schema in `src/db/schema/core.ts`: transactions, accounts, categories, allocations, allocation_transactions
 - [ ] Create database schema in `src/db/schema/auth.ts`: user_profiles, user_modules
@@ -29,9 +32,9 @@
 - [ ] Create utility files: `src/lib/format.ts` (currency formatting, centavo helpers), `src/lib/constants.ts` (default categories, character configs, colors), `src/lib/types.ts` (shared types)
 - [ ] Create Supabase client helpers: `src/lib/supabase/client.ts`, `src/lib/supabase/server.ts`, `src/lib/supabase/middleware.ts`
 - [ ] Create module system types: `src/modules/types.ts`
-- [ ] Verify: `pnpm dev` runs, Supabase connection works, tables created
+- [ ] Verify: run `npm run check` — all lint, typecheck, and build must pass with zero errors
 
-**Acceptance:** App boots, database schema in place, seed data ready, module type system defined.
+**Acceptance:** `npm run check` passes with zero errors. App boots, database schema in place, seed data ready, module type system defined.
 
 ---
 
@@ -56,7 +59,7 @@
 - [ ] On setup complete: save character_id to profile, activate character's modules, apply default dashboard layout, redirect to dashboard
 - [ ] Verify: Full signup → character select → setup → dashboard flow works
 
-**Acceptance:** User can sign up, pick a character (or take quiz), complete setup, and land on dashboard. Returning users go straight to dashboard.
+**Acceptance:** `npm run check` passes with zero errors. User can sign up, pick a character (or take quiz), complete setup, and land on dashboard. Returning users go straight to dashboard.
 
 ---
 
@@ -80,7 +83,7 @@
 - [ ] Character accent color applied to UI (sidebar accent, FAB color) based on user's character
 - [ ] Verify: Navigation works on desktop, tablet, mobile. Module routes appear/hide based on active modules.
 
-**Acceptance:** Full app shell with dynamic navigation. Character theming visible. Responsive across breakpoints.
+**Acceptance:** `npm run check` passes with zero errors. Full app shell with dynamic navigation. Character theming visible. Responsive across breakpoints.
 
 ---
 
@@ -102,7 +105,7 @@
 - [ ] Quick Add store (Zustand) to manage modal open/close state globally
 - [ ] Verify: Can create expense, income, and transfer. Module extensions appear when modules are active.
 
-**Acceptance:** Quick Add works end-to-end. Module form extensions inject correctly. Data persists. Under 5 seconds for a basic expense.
+**Acceptance:** `npm run check` passes with zero errors. Quick Add works end-to-end. Module form extensions inject correctly. Data persists. Under 5 seconds for a basic expense.
 
 ---
 
@@ -121,7 +124,7 @@
 - [ ] Empty state: friendly illustration + "Log your first expense!" CTA
 - [ ] Verify: Full CRUD, filters work, edit updates correctly, delete recalculates balances
 
-**Acceptance:** Transaction list is complete with filtering, editing, deleting. Empty state is friendly.
+**Acceptance:** `npm run check` passes with zero errors. Transaction list is complete with filtering, editing, deleting. Empty state is friendly.
 
 ---
 
@@ -139,7 +142,7 @@
 - [ ] Empty state: "Add your first account to start tracking"
 - [ ] Verify: Balances are always accurate. Archive works correctly.
 
-**Acceptance:** Account management complete. Balances derived correctly from transactions. Archive hides but preserves.
+**Acceptance:** `npm run check` passes with zero errors. Account management complete. Balances derived correctly from transactions. Archive hides but preserves.
 
 ---
 
@@ -157,7 +160,7 @@
 - [ ] Changes reflect immediately in Quick Add picker
 - [ ] Verify: Category tree is manageable. Changes propagate everywhere.
 
-**Acceptance:** Full category management. System categories protected. Custom categories supported.
+**Acceptance:** `npm run check` passes with zero errors. Full category management. System categories protected. Custom categories supported.
 
 ---
 
@@ -180,7 +183,7 @@
 - [ ] Server actions and queries specific to envelope operations
 - [ ] Verify: Envelopes track spending accurately. Auto-assignment works. Period reset works.
 
-**Acceptance:** Full envelope budgeting system. Linked categories auto-assign. Progress tracking is accurate. Dashboard widgets display correctly.
+**Acceptance:** `npm run check` passes with zero errors. Full envelope budgeting system. Linked categories auto-assign. Progress tracking is accurate. Dashboard widgets display correctly.
 
 ---
 
@@ -202,7 +205,7 @@
 - [ ] Server actions and queries specific to goal operations
 - [ ] Verify: Goals track contributions correctly. Projections are accurate. Completion triggers celebration.
 
-**Acceptance:** Full goal-based savings system. Progress tracking accurate. Projections update dynamically. Celebrations work.
+**Acceptance:** `npm run check` passes with zero errors. Full goal-based savings system. Progress tracking accurate. Projections update dynamically. Celebrations work.
 
 ---
 
@@ -222,7 +225,7 @@
 - [ ] Responsive: widgets reflow on mobile (single column)
 - [ ] Verify: Dashboard is customizable. Widgets render correctly. Layout persists.
 
-**Acceptance:** Dashboard is a fully customizable canvas. Widgets from all active modules are available. Layout saves per user.
+**Acceptance:** `npm run check` passes with zero errors. Dashboard is a fully customizable canvas. Widgets from all active modules are available. Layout saves per user.
 
 ---
 
@@ -239,7 +242,7 @@
 - [ ] Server queries with efficient aggregation
 - [ ] Verify: Charts accurate with real data. Period filter works. Interactive tooltips.
 
-**Acceptance:** Comprehensive statistics with accurate data. Charts render cleanly. Period selection works.
+**Acceptance:** `npm run check` passes with zero errors. Comprehensive statistics with accurate data. Charts render cleanly. Period selection works.
 
 ---
 
@@ -256,7 +259,7 @@
 - [ ] Monthly recap: end-of-month summary screen with key stats, shareable card format
 - [ ] Verify: Streaks track correctly. Achievements trigger properly. Health score calculates accurately.
 
-**Acceptance:** Gamification layer adds engagement. Streaks, achievements, health score all functional.
+**Acceptance:** `npm run check` passes with zero errors. Gamification layer adds engagement. Streaks, achievements, health score all functional.
 
 ---
 
@@ -275,7 +278,7 @@
 - [ ] Module enable/disable: update user_modules, sidebar and dashboard recompose
 - [ ] Verify: All settings persist. Module toggling immediately affects UI. Theme switching works.
 
-**Acceptance:** Full settings management. Module library is browsable. Character switching works smoothly.
+**Acceptance:** `npm run check` passes with zero errors. Full settings management. Module library is browsable. Character switching works smoothly.
 
 ---
 
@@ -294,7 +297,7 @@
 - [ ] Verify all features in production
 - [ ] Verify: App is polished, responsive, performant, and live
 
-**Acceptance:** CoinCraft Phase 1 is live and production-ready. All three character systems work. Gamification is active.
+**Acceptance:** `npm run check` passes with zero errors. CoinCraft Phase 1 is live and production-ready. All three character systems work. Gamification is active.
 
 ---
 

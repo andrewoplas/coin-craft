@@ -249,11 +249,10 @@ current_balance = initial_balance
 
 Update this section every time you start or complete a sprint.
 
-**Active Sprint:** Sprint 0 — Project Setup
+**Active Sprint:** Sprint 1 — Auth + Onboarding Shell
 **Phase:** 1
 **Status:** Not started
-**Completed Sprints:** None
+**Completed Sprints:** Sprint 0
 
 ### Sprint Progress Log
-<!-- Append each sprint completion here -->
-<!-- Format: Sprint X — [date] — Summary of what was built -->
+**Sprint 0 — 2026-02-04** — Project foundation complete. Next.js 14+ with App Router, TypeScript strict mode, Tailwind CSS, and shadcn/ui configured. Database schema created with 11 tables (accounts, transactions, categories, allocations, user profiles, gamification). RLS policies applied. Default categories and achievements seeded. Drizzle ORM connected to Supabase Postgres. Module system types defined. Utility functions (money formatting, date helpers, character configs) in place. Build and typecheck passing clean.

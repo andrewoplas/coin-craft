@@ -88,7 +88,7 @@
 ---
 
 ## Sprint 3: Core — Quick Add Transaction
-- [ ] Create Quick Add modal component (`components/transactions/quick-add-modal.tsx`)
+- [~] Create Quick Add modal component (`components/transactions/quick-add-modal.tsx`)
 - [ ] Amount input: large display, auto-focused, numeric input
 - [ ] Type toggle: Expense (red) | Income (green) | Transfer (blue) — defaults to Expense
 - [ ] Category picker: grid of emoji icons grouped by main category. Tap main → show subcategories

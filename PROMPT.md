@@ -1,33 +1,37 @@
-# CoinCraft — Sprint Builder
+# CoinCraft — Sprint-by-Sprint Implementation
 
-Read CLAUDE.md to find the current active sprint, rules, and verification process.
-Read TASKS.md to get all tasks for that sprint.
-Read SPEC.md and PLAN.md for implementation details and architecture.
+## Context Files (READ THESE FIRST)
+- `CLAUDE.md` — Active sprint, rules, verification process, architecture patterns
+- `TASKS.md` — Sprint task checklist with acceptance criteria and status tracking
+- `SPEC.md` — Full product specification, data models, UI guidelines
+- `PLAN.md` — Technical architecture, folder structure, database schema
 
-VERIFICATION IS MANDATORY:
-- After implementing each task, run `npm run check` (lint + typecheck + build) if available.
-- Fix ALL errors before marking a task [x].
-- Never move to the next task with broken code.
-- If `npm run check` is not yet available (early Sprint 0), skip until the check script is set up.
+## What To Build
+Read CLAUDE.md to find the current **Active Sprint**. Read TASKS.md to get all tasks for that sprint. Implement every task in order.
 
-FOR EACH TASK in the current sprint:
-1. Mark it [~] in TASKS.md
-2. Implement it following PLAN.md architecture and CLAUDE.md rules
-3. Run `npm run check` — fix any errors until clean
-4. Mark it [x] in TASKS.md
+## Task Tracking
+Tasks in TASKS.md use status markers:
+- `- [ ]` = pending
+- `- [~]` = in progress  
+- `- [x]` = complete
 
-AFTER ALL TASKS in the sprint are [x]:
+Update these markers as you work through each task.
+
+## Verification (MANDATORY)
+After every task, run `npm run check` (which runs lint + typecheck + build).
+Fix ALL errors before marking a task [x]. Never move on with broken code.
+If `npm run check` is not yet available (early Sprint 0), skip until the check script exists.
+
+## After All Tasks in a Sprint Are [x]
 1. Run `npm run check` one final time
-2. Verify sprint acceptance criteria from TASKS.md
+2. Verify the sprint acceptance criteria from TASKS.md
 3. Update CLAUDE.md: advance Active Sprint, set Status to Not started, update Completed Sprints, append to Sprint Progress Log
-4. Git commit with message: feat(sprint-N): brief description
-5. Immediately continue to the next sprint by re-reading CLAUDE.md for the next active sprint.
+4. Continue to the next sprint immediately — re-read CLAUDE.md for the new active sprint
 
-IF BLOCKED:
-- Document blocker in CLAUDE.md under a Blockers section
-- Skip the blocked task and continue with remaining tasks
-- If entire sprint is blocked, move to next sprint
+## Environment
+- This may be a bare directory. If no package.json exists, initialize from scratch.
+- If Supabase credentials are needed, create .env.local.example with placeholders. Mock what you need so the app builds.
+- Do NOT stop to ask for credentials or human input. Keep going.
 
-ENVIRONMENT SETUP:
-- If Supabase credentials needed, create .env.local.example with placeholders. Use dummy values so the app builds.
-- Do NOT stop to ask for credentials. Mock what you need and keep going.
+## Completion
+Keep building sprints until Sprint 13 is complete and all of Phase 1 is finished.

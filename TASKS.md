@@ -1,6 +1,11 @@
 # TASKS.md — CoinCraft Build Checklist
 
-> **Instructions for Claude Code:** Work through these tasks in order. Each Sprint is a self-contained chunk. Complete one sprint fully before moving to the next. After each sprint, the code should be runnable and testable. Always reference SPEC.md for product details and PLAN.md for architecture decisions.
+> **Task Status Tracking:**
+> - `- [ ]` = Pending (not started)
+> - `- [~]` = In Progress (currently being worked on)
+> - `- [x]` = Complete (done and verified)
+>
+> **Instructions for Claude Code:** Work through sprints in order. Before starting a task, mark it `[~]`. When done, mark it `[x]`. Complete one sprint fully before moving to the next. After each sprint, verify acceptance criteria, then update the Current Sprint section in CLAUDE.md. Always reference SPEC.md for product details and PLAN.md for architecture decisions.
 
 ---
 

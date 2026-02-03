@@ -1,4 +1,6 @@
-# CLAUDE.md — Instructions for Claude Code
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Context
 
@@ -92,12 +94,47 @@
 ## Common Commands
 
 ```bash
-pnpm dev                        # Start dev server
-pnpm build                      # Production build
-pnpm drizzle-kit generate       # Generate migration from schema changes
-pnpm drizzle-kit migrate        # Apply migrations
-pnpm tsx src/db/seed.ts          # Run seed script
-npx supabase start               # Start local Supabase (if using local dev)
+npm run dev                      # Start dev server
+npm run build                    # Production build
+npm run lint                     # Run linter
+
+# Database (Drizzle + Supabase)
+npm run drizzle-kit generate     # Generate migration from schema changes
+npm run drizzle-kit migrate      # Apply migrations
+npm run drizzle-kit studio       # Open Drizzle Studio (database GUI)
+npx tsx src/db/seed.ts           # Run seed script
+
+# Supabase (if using local dev)
+npx supabase start               # Start local Supabase
+npx supabase stop                # Stop local Supabase
+npx supabase db reset            # Reset local database
+```
+
+## Key Architecture Concepts
+
+### Module Registry Pattern
+Core components (sidebar, dashboard, Quick Add form) **never** import module code directly. Instead:
+1. Each module has a `manifest.ts` defining its routes, widgets, and form extensions
+2. `src/modules/registry.ts` discovers modules and exposes: `getActiveRoutes()`, `getActiveWidgets()`, `getActiveFormExtensions()`
+3. User's active modules stored in `user_modules` table
+4. UI components read from registry to compose dynamically
+
+### Allocations (Flexible Buckets)
+The `allocations` table is a polymorphic container used differently by each module:
+- **Envelope module:** Allocations = spending wallets with monthly budgets
+- **Goals module:** Allocations = savings targets with optional deadlines
+- **Debt module (Phase 2):** Allocations = debts to pay off
+
+The `module_type` column identifies which module owns each allocation. The `allocation_transactions` table links transactions to allocations for tracking.
+
+### Account Balance Computation
+Account balances are **always computed** from transactions, never stored directly:
+```
+current_balance = initial_balance
+  + sum(income to this account)
+  - sum(expenses from this account)
+  + sum(transfers in)
+  - sum(transfers out)
 ```
 
 ---
@@ -115,10 +152,14 @@ npx supabase start               # Start local Supabase (if using local dev)
 
 ---
 
-## Current Sprint
+Current Sprint
 
-> Update this section as you progress through TASKS.md
+Update this section every time you start or complete a sprint.
 
-**Active Sprint:** Sprint 0 — Project Setup
-**Phase:** 1
-**Status:** Not started
+Active Sprint: Sprint 0 — Project Setup
+Phase: 1
+Status: Not started
+Completed Sprints: None
+Sprint Progress Log
+<!-- Append each sprint completion here -->
+<!-- Format: Sprint X — [date] — Summary of what was built -->

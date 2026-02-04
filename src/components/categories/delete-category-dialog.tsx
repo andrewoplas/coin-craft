@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { deleteCategory } from '@/server/actions/categories';
 
 type DeleteCategoryDialogProps = {
   categoryId: string;
@@ -38,12 +39,7 @@ export function DeleteCategoryDialog({
     setIsDeleting(true);
 
     try {
-      // TODO: Implement deleteCategory server action (Task 7)
-      // const result = await deleteCategory({ categoryId });
-
-      // Placeholder for now
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const result = { success: false, error: 'deleteCategory not yet implemented' };
+      const result = await deleteCategory({ categoryId });
 
       if (!result.success) {
         toast.error('Failed to delete category', {

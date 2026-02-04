@@ -1,11 +1,11 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, or, count } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
 import { getUserCategories } from '@/server/queries/categories';
 import { db } from '@/db';
-import { categories } from '@/db/schema';
+import { categories, transactions } from '@/db/schema';
 import type { CategoryType } from '@/lib/types';
 
 export type ActionResult<T> =
@@ -34,6 +34,24 @@ export type UpdateCategoryInput = {
 };
 
 export type UpdateCategoryResult = {
+  success: boolean;
+  error?: string;
+};
+
+export type HideCategoryInput = {
+  categoryId: string;
+};
+
+export type HideCategoryResult = {
+  success: boolean;
+  error?: string;
+};
+
+export type DeleteCategoryInput = {
+  categoryId: string;
+};
+
+export type DeleteCategoryResult = {
   success: boolean;
   error?: string;
 };
@@ -243,6 +261,164 @@ export async function updateCategory(
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to update category',
+    };
+  }
+}
+
+/**
+ * Server action to hide a system category (soft delete)
+ * Sets isHidden=true to hide category from main view while preserving all data
+ * Only works for system categories (isSystem=true)
+ */
+export async function hideCategory(
+  input: HideCategoryInput
+): Promise<HideCategoryResult> {
+  try {
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    // Fetch existing category
+    const [existingCategory] = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.id, input.categoryId))
+      .limit(1);
+
+    if (!existingCategory) {
+      return { success: false, error: 'Category not found' };
+    }
+
+    // Only system categories can be hidden
+    if (!existingCategory.isSystem) {
+      return {
+        success: false,
+        error: 'Only system categories can be hidden. User categories can be deleted.',
+      };
+    }
+
+    // Hide category by setting isHidden=true
+    await db
+      .update(categories)
+      .set({ isHidden: true })
+      .where(eq(categories.id, input.categoryId));
+
+    // Revalidate pages to refresh server components
+    revalidatePath('/categories');
+    revalidatePath('/transactions');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error hiding category:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to hide category',
+    };
+  }
+}
+
+/**
+ * Server action to delete a user-created category (hard delete)
+ * Prevents deletion of:
+ * - System categories (use hideCategory instead)
+ * - Categories with existing transactions
+ * Also deletes any subcategories recursively
+ */
+export async function deleteCategory(
+  input: DeleteCategoryInput
+): Promise<DeleteCategoryResult> {
+  try {
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    // Fetch existing category and verify ownership
+    const [existingCategory] = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.id, input.categoryId))
+      .limit(1);
+
+    if (!existingCategory) {
+      return { success: false, error: 'Category not found' };
+    }
+
+    // Prevent deleting system categories
+    if (existingCategory.isSystem) {
+      return {
+        success: false,
+        error: 'Cannot delete system categories. Use hide instead.',
+      };
+    }
+
+    // Verify ownership
+    if (existingCategory.userId !== user.id) {
+      return { success: false, error: 'Not authorized to delete this category' };
+    }
+
+    // Check for existing transactions using this category or any of its subcategories
+    const subcategoryList = await db
+      .select({ id: categories.id })
+      .from(categories)
+      .where(eq(categories.parentId, input.categoryId));
+
+    // Collect all category IDs to check (main category + subcategories)
+    const categoryIdsToCheck = [
+      input.categoryId,
+      ...subcategoryList.map((sub) => sub.id),
+    ];
+
+    // Check if any transactions exist for these categories
+    const [transactionCountResult] = await db
+      .select({ count: count() })
+      .from(transactions)
+      .where(
+        or(
+          ...categoryIdsToCheck.map((id) => eq(transactions.categoryId, id))
+        )
+      );
+
+    const transactionCount = transactionCountResult?.count || 0;
+
+    if (transactionCount > 0) {
+      return {
+        success: false,
+        error: `Cannot delete category with ${transactionCount} existing transaction${transactionCount > 1 ? 's' : ''}. Delete or recategorize transactions first.`,
+      };
+    }
+
+    // Delete subcategories first (if any exist)
+    if (subcategoryList.length > 0) {
+      await db
+        .delete(categories)
+        .where(eq(categories.parentId, input.categoryId));
+    }
+
+    // Delete the main category
+    await db.delete(categories).where(eq(categories.id, input.categoryId));
+
+    // Revalidate pages to refresh server components
+    revalidatePath('/categories');
+    revalidatePath('/transactions');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to delete category',
     };
   }
 }

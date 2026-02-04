@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { hideCategory } from '@/server/actions/categories';
 
 type HideCategoryDialogProps = {
   categoryId: string;
@@ -38,12 +39,7 @@ export function HideCategoryDialog({
     setIsHiding(true);
 
     try {
-      // TODO: Implement hideCategory server action (Task 7)
-      // const result = await hideCategory({ categoryId });
-
-      // Placeholder for now
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const result = { success: false, error: 'hideCategory not yet implemented' };
+      const result = await hideCategory({ categoryId });
 
       if (!result.success) {
         toast.error('Failed to hide category', {

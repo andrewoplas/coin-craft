@@ -1,4 +1,5 @@
 import { type ModuleManifest } from '../types';
+import { WalletPicker } from './form-extensions/wallet-picker';
 
 export const envelopeManifest: ModuleManifest = {
   id: 'envelope',
@@ -17,7 +18,16 @@ export const envelopeManifest: ModuleManifest = {
   ],
 
   dashboardWidgets: [],
-  formExtensions: [],
+  formExtensions: [
+    {
+      id: 'envelope-wallet-picker',
+      label: 'Which wallet?',
+      position: 'after-category',
+      component: WalletPicker,
+      transactionTypes: ['expense'],
+      required: false,
+    },
+  ],
   allocationType: 'envelope',
   settings: [],
   nudges: [],

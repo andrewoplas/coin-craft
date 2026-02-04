@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { getActiveEnvelopes } from '@/server/queries/allocations';
+import { getActiveEnvelopes, getActiveGoals } from '@/server/queries/allocations';
 
 export type ActionResult<T> =
   | { success: true; data: T }
@@ -34,6 +34,37 @@ export async function fetchActiveEnvelopes() {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to fetch envelopes',
+    } as const;
+  }
+}
+
+/**
+ * Server action to fetch active goals for the current user
+ */
+export async function fetchActiveGoals() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      error: 'Not authenticated',
+    } as const;
+  }
+
+  try {
+    const goals = await getActiveGoals(user.id);
+    return {
+      success: true,
+      data: goals,
+    } as const;
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch goals',
     } as const;
   }
 }

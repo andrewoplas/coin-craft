@@ -1,4 +1,5 @@
 import { type ModuleManifest } from '../types';
+import { GoalPicker } from './form-extensions/goal-picker';
 
 export const goalsManifest: ModuleManifest = {
   id: 'goals',
@@ -17,7 +18,16 @@ export const goalsManifest: ModuleManifest = {
   ],
 
   dashboardWidgets: [],
-  formExtensions: [],
+  formExtensions: [
+    {
+      id: 'goals-allocation-picker',
+      label: 'Allocate to goal?',
+      position: 'after-account',
+      component: GoalPicker,
+      transactionTypes: ['income'],
+      required: false,
+    },
+  ],
   allocationType: 'goal',
   settings: [],
   nudges: [],

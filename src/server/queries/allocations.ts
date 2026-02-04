@@ -11,6 +11,15 @@ export type Envelope = {
   categoryIds: string[] | null;
 };
 
+export type Goal = {
+  id: string;
+  name: string;
+  icon: string | null;
+  currentAmount: number;
+  targetAmount: number | null;
+  deadline: string | null;
+};
+
 /**
  * Fetch active envelopes for a user
  */
@@ -34,4 +43,29 @@ export async function getActiveEnvelopes(userId: string): Promise<Envelope[]> {
     );
 
   return envelopes;
+}
+
+/**
+ * Fetch active goals for a user
+ */
+export async function getActiveGoals(userId: string): Promise<Goal[]> {
+  const goals = await db
+    .select({
+      id: allocations.id,
+      name: allocations.name,
+      icon: allocations.icon,
+      currentAmount: allocations.currentAmount,
+      targetAmount: allocations.targetAmount,
+      deadline: allocations.deadline,
+    })
+    .from(allocations)
+    .where(
+      and(
+        eq(allocations.userId, userId),
+        eq(allocations.moduleType, 'goal'),
+        eq(allocations.isActive, true)
+      )
+    );
+
+  return goals;
 }

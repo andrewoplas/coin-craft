@@ -6,9 +6,14 @@ export type Envelope = {
   id: string;
   name: string;
   icon: string | null;
+  color: string | null;
   currentAmount: number;
   targetAmount: number | null;
+  period: string | null;
+  periodStart: string | null;
+  config: string | null;
   categoryIds: string[] | null;
+  sortOrder: number;
 };
 
 export type Goal = {
@@ -29,9 +34,14 @@ export async function getActiveEnvelopes(userId: string): Promise<Envelope[]> {
       id: allocations.id,
       name: allocations.name,
       icon: allocations.icon,
+      color: allocations.color,
       currentAmount: allocations.currentAmount,
       targetAmount: allocations.targetAmount,
+      period: allocations.period,
+      periodStart: allocations.periodStart,
+      config: allocations.config,
       categoryIds: allocations.categoryIds,
+      sortOrder: allocations.sortOrder,
     })
     .from(allocations)
     .where(
@@ -40,7 +50,8 @@ export async function getActiveEnvelopes(userId: string): Promise<Envelope[]> {
         eq(allocations.moduleType, 'envelope'),
         eq(allocations.isActive, true)
       )
-    );
+    )
+    .orderBy(allocations.sortOrder);
 
   return envelopes;
 }

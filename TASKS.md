@@ -230,17 +230,17 @@
 ---
 
 ## Sprint 10: Statistics Module
-- [ ] Create Statistics page (`app/(app)/statistics/page.tsx`)
-- [ ] Tab layout: Spending | Cash Flow | Trends
-- [ ] **Spending tab:** category breakdown (pie chart + table), spending by subcategory, top 5 categories
-- [ ] **Cash Flow tab:** income vs expenses by month (bar chart), net cash flow line, period-over-period comparison
-- [ ] **Trends tab:** daily spending line chart, monthly spending trend (6 months), average daily spend
-- [ ] Period selector: This Month, Last Month, Last 3 Months, Last 6 Months, This Year, Custom Range
-- [ ] All charts use Recharts with tooltips and legends
-- [ ] Module-aware: if envelopes active, show envelope performance stats. If goals active, show savings trends.
-- [ ] Dashboard widgets: Trend Chart, Period Comparison, Top Categories
-- [ ] Server queries with efficient aggregation
-- [ ] Verify: Charts accurate with real data. Period filter works. Interactive tooltips.
+- [x] Create Statistics page (`app/(app)/statistics/page.tsx`)
+- [x] Tab layout: Spending | Cash Flow | Trends
+- [x] **Spending tab:** category breakdown (pie chart + table), spending by subcategory, top 5 categories
+- [x] **Cash Flow tab:** income vs expenses by month (bar chart), net cash flow line, period-over-period comparison
+- [x] **Trends tab:** daily spending line chart, monthly spending trend (6 months), average daily spend
+- [x] Period selector: This Month, Last Month, Last 3 Months, Last 6 Months, This Year, Custom Range
+- [x] All charts use Recharts with tooltips and legends
+- [x] Module-aware: if envelopes active, show envelope performance stats. If goals active, show savings trends.
+- [x] Dashboard widgets: Trend Chart, Period Comparison, Top Categories
+- [x] Server queries with efficient aggregation
+- [x] Verify: Charts accurate with real data. Period filter works. Interactive tooltips.
 
 **Acceptance:** `npm run check` passes with zero errors. Comprehensive statistics with accurate data. Charts render cleanly. Period selection works.
 

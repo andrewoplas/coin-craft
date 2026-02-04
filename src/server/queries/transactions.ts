@@ -6,7 +6,7 @@ import {
   allocationTransactions,
   allocations,
 } from '@/db/schema';
-import { eq, and, desc, inArray, lt, or } from 'drizzle-orm';
+import { eq, and, desc, inArray, lt, or, gte, lte } from 'drizzle-orm';
 import type { TransactionType, CategoryType, AccountType } from '@/lib/types';
 
 export type PaginatedTransactions = {
@@ -231,6 +231,14 @@ export async function getUserTransactions(
   return result;
 }
 
+export type TransactionFilters = {
+  type?: TransactionType | 'all';
+  accountId?: string;
+  categoryId?: string;
+  dateFrom?: string; // YYYY-MM-DD
+  dateTo?: string; // YYYY-MM-DD
+};
+
 /**
  * Encode a transaction cursor for pagination
  */
@@ -248,15 +256,17 @@ function decodeCursor(encoded: string): TransactionCursor {
 /**
  * Get paginated transactions for a user with cursor-based pagination
  * Supports infinite scroll with stable cursors
+ * Supports filtering by type, account, category, and date range
  */
 export async function getUserTransactionsPaginated(
   userId: string,
   options?: {
     limit?: number;
     cursor?: string;
+    filters?: TransactionFilters;
   }
 ): Promise<PaginatedTransactions> {
-  const { limit = 50, cursor } = options || {};
+  const { limit = 50, cursor, filters } = options || {};
 
   // Decode cursor if provided
   let cursorData: TransactionCursor | null = null;
@@ -269,7 +279,7 @@ export async function getUserTransactionsPaginated(
     }
   }
 
-  // Build where clause with cursor filter
+  // Build where clause with cursor filter and filters
   const whereConditions = [eq(transactions.userId, userId)];
 
   if (cursorData) {
@@ -290,6 +300,23 @@ export async function getUserTransactionsPaginated(
         )
       )!
     );
+  }
+
+  // Apply filters
+  if (filters?.type && filters.type !== 'all') {
+    whereConditions.push(eq(transactions.type, filters.type));
+  }
+  if (filters?.accountId) {
+    whereConditions.push(eq(transactions.accountId, filters.accountId));
+  }
+  if (filters?.categoryId) {
+    whereConditions.push(eq(transactions.categoryId, filters.categoryId));
+  }
+  if (filters?.dateFrom) {
+    whereConditions.push(gte(transactions.date, filters.dateFrom));
+  }
+  if (filters?.dateTo) {
+    whereConditions.push(lte(transactions.date, filters.dateTo));
   }
 
   // Fetch limit + 1 to check if there are more results

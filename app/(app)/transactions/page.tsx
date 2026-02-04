@@ -1,20 +1,43 @@
 import { createClient } from '@/lib/supabase/server';
-import { getUserTransactionsPaginated } from '@/server/queries/transactions';
+import {
+  getUserTransactionsPaginated,
+  type TransactionFilters,
+} from '@/server/queries/transactions';
 import { getUserCategories } from '@/server/queries/categories';
 import { getUserAccounts } from '@/server/queries/accounts';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { TransactionsEmptyState } from '@/components/transactions/transactions-empty-state';
 import { FilterBar } from '@/components/transactions/filter-bar';
+import type { TransactionType } from '@/lib/types';
 
-export default async function TransactionsPage() {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function TransactionsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
 
-  // Fetch initial page of transactions
+  // Extract filter values from URL searchParams
+  const params = await searchParams;
+  const filters: TransactionFilters = {
+    type:
+      params.type && params.type !== 'all'
+        ? (params.type as TransactionType)
+        : undefined,
+    accountId: params.account ? String(params.account) : undefined,
+    categoryId: params.category ? String(params.category) : undefined,
+    dateFrom: params.dateFrom ? String(params.dateFrom) : undefined,
+    dateTo: params.dateTo ? String(params.dateTo) : undefined,
+  };
+
+  // Fetch initial page of transactions with filters
   const { transactions: initialTransactions, hasMore, nextCursor } =
-    await getUserTransactionsPaginated(user.id, { limit: 50 });
+    await getUserTransactionsPaginated(user.id, { limit: 50, filters });
 
   // Fetch filter data
   const categories = await getUserCategories(user.id);

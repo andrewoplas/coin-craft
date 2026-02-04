@@ -110,12 +110,12 @@
 ---
 
 ## Sprint 4: Core — Transaction List
-- [ ] Create Transactions page (`app/(app)/transactions/page.tsx`)
-- [ ] Fetch transactions with server query (`server/queries/transactions.ts`)
-- [ ] Display transactions grouped by date (today, yesterday, specific dates)
-- [ ] Each row: category emoji, category name, note (truncated), amount (color-coded by type), account name
-- [ ] If envelope/goal assigned, show small badge/tag
-- [ ] Filter bar: date range picker, category dropdown, account dropdown, type filter (all/expense/income/transfer)
+- [x] Create Transactions page (`app/(app)/transactions/page.tsx`)
+- [x] Fetch transactions with server query (`server/queries/transactions.ts`)
+- [x] Display transactions grouped by date (today, yesterday, specific dates)
+- [x] Each row: category emoji, category name, note (truncated), amount (color-coded by type), account name
+- [x] If envelope/goal assigned, show small badge/tag
+- [x] Filter bar: date range picker, category dropdown, account dropdown, type filter (all/expense/income/transfer)
 - [ ] Text search on notes
 - [ ] Click transaction to open edit modal (same form as Quick Add, pre-filled)
 - [ ] Delete transaction with confirmation dialog

@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useAddEnvelopeStore } from '@/stores/add-envelope-store';
+import { createEnvelope } from '@/server/actions/envelopes';
 import { toast } from 'sonner';
 
 type AddEnvelopeModalProps = {
@@ -71,9 +72,8 @@ export function AddEnvelopeModal({ open, onOpenChange }: AddEnvelopeModalProps) 
     setIsSaving(true);
 
     try {
-      // TODO: Call createEnvelope server action (will be implemented in next task)
-      // For now, just log the data
-      console.log('Creating envelope:', {
+      // Call createEnvelope server action
+      const result = await createEnvelope({
         name: name.trim(),
         emoji: emoji || '💰',
         targetAmount: amountValue,
@@ -81,14 +81,19 @@ export function AddEnvelopeModal({ open, onOpenChange }: AddEnvelopeModalProps) 
         rolloverEnabled,
       });
 
-      // Placeholder success
-      toast.success('Envelope created', {
-        description: `${name} has been added to your envelopes.`,
-      });
+      if (result.success) {
+        toast.success('Envelope created', {
+          description: `${name} has been added to your envelopes.`,
+        });
 
-      // Reset form and close modal
-      reset();
-      onOpenChange(false);
+        // Reset form and close modal
+        reset();
+        onOpenChange(false);
+      } else {
+        toast.error('Failed to create envelope', {
+          description: result.error || 'An unexpected error occurred.',
+        });
+      }
     } catch (error) {
       toast.error('Failed to create envelope', {
         description: error instanceof Error ? error.message : 'An unexpected error occurred.',

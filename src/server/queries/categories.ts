@@ -1,6 +1,6 @@
 import { db } from '@/db';
-import { categories } from '@/db/schema';
-import { eq, and, isNull, or } from 'drizzle-orm';
+import { categories, transactions } from '@/db/schema';
+import { eq, and, isNull, or, count, sql } from 'drizzle-orm';
 import type { CategoryType } from '@/lib/types';
 
 export type Category = {
@@ -13,6 +13,7 @@ export type Category = {
   sortOrder: number;
   isSystem: boolean;
   userId: string | null;
+  transactionCount?: number;
 };
 
 export type CategoryWithSubcategories = Category & {
@@ -21,7 +22,7 @@ export type CategoryWithSubcategories = Category & {
 
 /**
  * Get all categories for a user (both system and user-created)
- * Returns main categories with their subcategories nested
+ * Returns main categories with their subcategories nested, including transaction counts
  */
 export async function getUserCategories(
   userId: string,
@@ -55,21 +56,55 @@ export async function getUserCategories(
     .where(whereClause)
     .orderBy(categories.sortOrder);
 
+  // Get transaction counts for each category
+  const categoryIds = allCategories.map((cat) => cat.id);
+  const countMap = new Map<string, number>();
+
+  // Only query transaction counts if there are categories
+  if (categoryIds.length > 0) {
+    const transactionCounts = await db
+      .select({
+        categoryId: transactions.categoryId,
+        count: count(),
+      })
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.userId, userId),
+          sql`${transactions.categoryId} IN (${sql.join(
+            categoryIds.map((id) => sql`${id}`),
+            sql`, `
+          )})`
+        )
+      )
+      .groupBy(transactions.categoryId);
+
+    // Create a map of category ID to transaction count
+    for (const { categoryId, count: txCount } of transactionCounts) {
+      countMap.set(categoryId, txCount);
+    }
+  }
+
   // Separate main categories (parentId = null) and subcategories
   const mainCategories: CategoryWithSubcategories[] = [];
   const subcategoriesMap = new Map<string, Category[]>();
 
   for (const cat of allCategories) {
+    const categoryWithCount = {
+      ...cat,
+      transactionCount: countMap.get(cat.id) || 0,
+    };
+
     if (cat.parentId === null) {
       mainCategories.push({
-        ...cat,
+        ...categoryWithCount,
         subcategories: [],
       });
     } else {
       if (!subcategoriesMap.has(cat.parentId)) {
         subcategoriesMap.set(cat.parentId, []);
       }
-      subcategoriesMap.get(cat.parentId)!.push(cat);
+      subcategoriesMap.get(cat.parentId)!.push(categoryWithCount);
     }
   }
 

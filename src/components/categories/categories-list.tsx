@@ -74,11 +74,21 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
               <span className="text-2xl">{category.icon || '📁'}</span>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                {category.subcategories.length > 0 && (
-                  <p className="text-sm text-gray-500">
-                    {category.subcategories.length} {category.subcategories.length === 1 ? 'subcategory' : 'subcategories'}
-                  </p>
-                )}
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  {category.subcategories.length > 0 && (
+                    <span>
+                      {category.subcategories.length} {category.subcategories.length === 1 ? 'subcategory' : 'subcategories'}
+                    </span>
+                  )}
+                  {category.subcategories.length > 0 && category.transactionCount !== undefined && category.transactionCount > 0 && (
+                    <span>•</span>
+                  )}
+                  {category.transactionCount !== undefined && category.transactionCount > 0 && (
+                    <span>
+                      {category.transactionCount} {category.transactionCount === 1 ? 'transaction' : 'transactions'}
+                    </span>
+                  )}
+                </div>
               </div>
               {category.color && (
                 <div
@@ -120,7 +130,14 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                 {category.subcategories.map((subcategory) => (
                   <div key={subcategory.id} className="flex items-center gap-2 text-sm">
                     <span className="text-lg">{subcategory.icon || '📄'}</span>
-                    <span className="text-gray-700 flex-1">{subcategory.name}</span>
+                    <div className="flex-1">
+                      <span className="text-gray-700">{subcategory.name}</span>
+                      {subcategory.transactionCount !== undefined && subcategory.transactionCount > 0 && (
+                        <span className="text-xs text-gray-500 ml-2">
+                          ({subcategory.transactionCount} {subcategory.transactionCount === 1 ? 'transaction' : 'transactions'})
+                        </span>
+                      )}
+                    </div>
                     {subcategory.color && (
                       <div
                         className="w-3 h-3 rounded-full border border-gray-300"

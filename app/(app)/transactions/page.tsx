@@ -33,6 +33,7 @@ export default async function TransactionsPage({
     categoryId: params.category ? String(params.category) : undefined,
     dateFrom: params.dateFrom ? String(params.dateFrom) : undefined,
     dateTo: params.dateTo ? String(params.dateTo) : undefined,
+    note: params.search ? String(params.search) : undefined,
   };
 
   // Fetch initial page of transactions with filters

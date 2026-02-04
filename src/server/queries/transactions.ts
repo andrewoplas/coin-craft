@@ -6,7 +6,7 @@ import {
   allocationTransactions,
   allocations,
 } from '@/db/schema';
-import { eq, and, desc, inArray, lt, or, gte, lte } from 'drizzle-orm';
+import { eq, and, desc, inArray, lt, or, gte, lte, ilike } from 'drizzle-orm';
 import type { TransactionType, CategoryType, AccountType } from '@/lib/types';
 
 export type PaginatedTransactions = {
@@ -237,6 +237,7 @@ export type TransactionFilters = {
   categoryId?: string;
   dateFrom?: string; // YYYY-MM-DD
   dateTo?: string; // YYYY-MM-DD
+  note?: string; // Search term for note field (case-insensitive partial match)
 };
 
 /**
@@ -317,6 +318,9 @@ export async function getUserTransactionsPaginated(
   }
   if (filters?.dateTo) {
     whereConditions.push(lte(transactions.date, filters.dateTo));
+  }
+  if (filters?.note) {
+    whereConditions.push(ilike(transactions.note, `%${filters.note}%`));
   }
 
   // Fetch limit + 1 to check if there are more results

@@ -1,7 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { CalendarIcon, X } from 'lucide-react';
+import { CalendarIcon, X, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   Select,
@@ -11,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
@@ -48,6 +50,32 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
   const currentCategory = searchParams.get('category') || 'all';
   const currentDateFrom = searchParams.get('dateFrom') || '';
   const currentDateTo = searchParams.get('dateTo') || '';
+  const currentSearch = searchParams.get('search') || '';
+
+  // Local state for search input (debounced)
+  const [searchValue, setSearchValue] = useState(currentSearch);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (searchValue === '') {
+        params.delete('search');
+      } else {
+        params.set('search', searchValue);
+      }
+
+      router.push(`${pathname}?${params.toString()}`);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchValue, searchParams, pathname, router]);
+
+  // Sync local state with URL when URL changes externally (e.g., clear filters)
+  useEffect(() => {
+    setSearchValue(currentSearch);
+  }, [currentSearch]);
 
   // Update URL with new filter value
   const updateFilter = (key: string, value: string) => {
@@ -73,7 +101,8 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
     currentAccount !== 'all' ||
     currentCategory !== 'all' ||
     currentDateFrom !== '' ||
-    currentDateTo !== '';
+    currentDateTo !== '' ||
+    currentSearch !== '';
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
@@ -211,6 +240,31 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
                 />
               </PopoverContent>
             </Popover>
+          </div>
+        </div>
+
+        {/* Search Input */}
+        <div className="w-full">
+          <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+            Search notes
+          </label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search transaction notes..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="pl-9"
+            />
+            {searchValue && (
+              <button
+                onClick={() => setSearchValue('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
 

@@ -116,7 +116,7 @@
 - [x] Each row: category emoji, category name, note (truncated), amount (color-coded by type), account name
 - [x] If envelope/goal assigned, show small badge/tag
 - [x] Filter bar: date range picker, category dropdown, account dropdown, type filter (all/expense/income/transfer)
-- [ ] Text search on notes
+- [x] Text search on notes
 - [ ] Click transaction to open edit modal (same form as Quick Add, pre-filled)
 - [ ] Delete transaction with confirmation dialog
 - [ ] Server actions: `updateTransaction`, `deleteTransaction` (recalculates balances, allocation amounts)

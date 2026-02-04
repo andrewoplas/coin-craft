@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getUserActiveModules, getUserProfile } from '@/server/queries/user';
+import { getUserCategories } from '@/server/queries/categories';
+import { getAccountsWithBalances } from '@/server/queries/accounts';
 import { getActiveRoutes } from '@/modules/registry';
 import { Sidebar } from '@/components/layout/sidebar';
 import { MobileNav } from '@/components/layout/mobile-nav';
@@ -29,6 +31,12 @@ export default async function AppLayout({
   const character = profile?.characterId ? CHARACTERS[profile.characterId] : null;
   const accentColor = character?.accentColor || '#3B82F6';
 
+  // Fetch categories and accounts for Quick Add modal
+  const [categories, accounts] = await Promise.all([
+    getUserCategories(user.id),
+    getAccountsWithBalances(user.id),
+  ]);
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar routes={routes} accentColor={accentColor} />
@@ -39,7 +47,11 @@ export default async function AppLayout({
 
       <MobileNav routes={routes} accentColor={accentColor} />
 
-      <QuickAddWrapper activeModules={activeModuleIds} />
+      <QuickAddWrapper
+        activeModules={activeModuleIds}
+        categories={categories}
+        accounts={accounts}
+      />
 
       <Toaster position="top-center" richColors />
     </div>

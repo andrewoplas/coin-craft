@@ -2,17 +2,22 @@
 
 import { Envelope } from '@/server/queries/allocations';
 import { EnvelopeCard } from './envelope-card';
+import { AddEnvelopeModal } from './add-envelope-modal';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useAddEnvelopeStore } from '@/stores/add-envelope-store';
 
 type EnvelopesListProps = {
   envelopes: Envelope[];
 };
 
 export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
+  const isModalOpen = useAddEnvelopeStore((state) => state.isOpen);
+  const openModal = useAddEnvelopeStore((state) => state.open);
+  const closeModal = useAddEnvelopeStore((state) => state.close);
+
   const handleAddEnvelope = () => {
-    // TODO: Open add envelope modal (will be implemented in next task)
-    console.log('Add envelope clicked');
+    openModal();
   };
 
   // Empty state
@@ -58,6 +63,9 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
           <EnvelopeCard key={envelope.id} envelope={envelope} />
         ))}
       </div>
+
+      {/* Add Envelope Modal */}
+      <AddEnvelopeModal open={isModalOpen} onOpenChange={closeModal} />
     </div>
   );
 };

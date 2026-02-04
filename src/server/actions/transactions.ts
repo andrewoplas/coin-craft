@@ -443,3 +443,57 @@ async function updateStreak(userId: string, transactionDate: string): Promise<vo
     })
     .where(eq(streaks.userId, userId));
 }
+
+/**
+ * Fetch next page of transactions for infinite scroll
+ */
+export async function getNextTransactionsPage(
+  cursor: string,
+  filters?: {
+    type?: string;
+    accountId?: string;
+    categoryId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    note?: string;
+  }
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  try {
+    const { getUserTransactionsPaginated } = await import('@/server/queries/transactions');
+
+    const transactionFilters = {
+      type: filters?.type && filters.type !== 'all' ? filters.type as 'expense' | 'income' | 'transfer' : undefined,
+      accountId: filters?.accountId,
+      categoryId: filters?.categoryId,
+      dateFrom: filters?.dateFrom,
+      dateTo: filters?.dateTo,
+      note: filters?.note,
+    };
+
+    const result = await getUserTransactionsPaginated(user.id, {
+      cursor,
+      limit: 50,
+      filters: transactionFilters,
+    });
+
+    return {
+      success: true,
+      transactions: result.transactions,
+      hasMore: result.hasMore,
+      nextCursor: result.nextCursor,
+    };
+  } catch (error) {
+    console.error('Error fetching next transactions page:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch transactions',
+    };
+  }
+}

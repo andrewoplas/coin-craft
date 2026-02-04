@@ -5,7 +5,7 @@ import {
 } from '@/server/queries/transactions';
 import { getUserCategories } from '@/server/queries/categories';
 import { getUserAccounts } from '@/server/queries/accounts';
-import { TransactionList } from '@/components/transactions/transaction-list';
+import { InfiniteTransactionList } from '@/components/transactions/infinite-transaction-list';
 import { TransactionsEmptyState } from '@/components/transactions/transactions-empty-state';
 import { FilterBar } from '@/components/transactions/filter-bar';
 import type { TransactionType } from '@/lib/types';
@@ -64,15 +64,19 @@ export default async function TransactionsPage({
         {initialTransactions.length === 0 ? (
           <TransactionsEmptyState />
         ) : (
-          <TransactionList transactions={initialTransactions} />
-        )}
-
-        {hasMore && (
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
-              More transactions available (pagination coming soon)
-            </p>
-          </div>
+          <InfiniteTransactionList
+            initialTransactions={initialTransactions}
+            initialHasMore={hasMore}
+            initialNextCursor={nextCursor}
+            filters={{
+              type: params.type ? String(params.type) : undefined,
+              accountId: params.account ? String(params.account) : undefined,
+              categoryId: params.category ? String(params.category) : undefined,
+              dateFrom: params.dateFrom ? String(params.dateFrom) : undefined,
+              dateTo: params.dateTo ? String(params.dateTo) : undefined,
+              note: params.search ? String(params.search) : undefined,
+            }}
+          />
         )}
       </div>
     </div>

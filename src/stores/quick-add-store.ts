@@ -102,6 +102,8 @@ export const useQuickAddStore = create<QuickAddStore>((set) => ({
         type: transaction.category.type,
         parentId: null, // TransactionWithRelations doesn't include parentId, safe to set null
         sortOrder: 0, // TransactionWithRelations doesn't include sortOrder, safe to set 0
+        isSystem: false, // TransactionWithRelations doesn't include isSystem, safe to set false
+        userId: null, // TransactionWithRelations doesn't include userId, safe to set null
       },
       selectedAccountId: transaction.account.id,
       selectedToAccountId: transaction.toAccount?.id || '',

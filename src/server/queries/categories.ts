@@ -11,6 +11,8 @@ export type Category = {
   type: CategoryType;
   parentId: string | null;
   sortOrder: number;
+  isSystem: boolean;
+  userId: string | null;
 };
 
 export type CategoryWithSubcategories = Category & {
@@ -46,6 +48,8 @@ export async function getUserCategories(
       type: categories.type,
       parentId: categories.parentId,
       sortOrder: categories.sortOrder,
+      isSystem: categories.isSystem,
+      userId: categories.userId,
     })
     .from(categories)
     .where(whereClause)

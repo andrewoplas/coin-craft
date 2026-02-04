@@ -5,6 +5,8 @@ import type { CategoryType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useEditCategoryStore } from '@/stores/edit-category-store';
 import { Pencil } from 'lucide-react';
+import { DeleteCategoryDialog } from './delete-category-dialog';
+import { HideCategoryDialog } from './hide-category-dialog';
 
 type CategoriesListProps = {
   categories: CategoryWithSubcategories[];
@@ -84,15 +86,32 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                   style={{ backgroundColor: category.color }}
                 />
               )}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleEditCategory(category)}
-                className="hover:bg-gray-100"
-              >
-                <Pencil className="h-4 w-4 text-gray-600" />
-                <span className="sr-only">Edit {category.name}</span>
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleEditCategory(category)}
+                  className="hover:bg-gray-100"
+                >
+                  <Pencil className="h-4 w-4 text-gray-600" />
+                  <span className="sr-only">Edit {category.name}</span>
+                </Button>
+                {category.isSystem ? (
+                  <HideCategoryDialog
+                    categoryId={category.id}
+                    categoryName={category.name}
+                    categoryIcon={category.icon}
+                    type={type}
+                  />
+                ) : (
+                  <DeleteCategoryDialog
+                    categoryId={category.id}
+                    categoryName={category.name}
+                    categoryIcon={category.icon}
+                    type={type}
+                  />
+                )}
+              </div>
             </div>
 
             {/* Subcategories */}
@@ -108,15 +127,34 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                         style={{ backgroundColor: subcategory.color }}
                       />
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditSubcategory(subcategory, category.name)}
-                      className="hover:bg-gray-100 h-6 w-6"
-                    >
-                      <Pencil className="h-3 w-3 text-gray-600" />
-                      <span className="sr-only">Edit {subcategory.name}</span>
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditSubcategory(subcategory, category.name)}
+                        className="hover:bg-gray-100 h-6 w-6"
+                      >
+                        <Pencil className="h-3 w-3 text-gray-600" />
+                        <span className="sr-only">Edit {subcategory.name}</span>
+                      </Button>
+                      {subcategory.isSystem ? (
+                        <HideCategoryDialog
+                          categoryId={subcategory.id}
+                          categoryName={subcategory.name}
+                          categoryIcon={subcategory.icon}
+                          type={type}
+                          small
+                        />
+                      ) : (
+                        <DeleteCategoryDialog
+                          categoryId={subcategory.id}
+                          categoryName={subcategory.name}
+                          categoryIcon={subcategory.icon}
+                          type={type}
+                          small
+                        />
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

@@ -52,6 +52,7 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
   const transactionType = useQuickAddStore((state) => state.transactionType);
   const selectedCategory = useQuickAddStore((state) => state.selectedCategory);
   const selectedAccountId = useQuickAddStore((state) => state.selectedAccountId);
+  const selectedToAccountId = useQuickAddStore((state) => state.selectedToAccountId);
   const selectedDate = useQuickAddStore((state) => state.selectedDate);
   const note = useQuickAddStore((state) => state.note);
   const categoryPickerOpen = useQuickAddStore((state) => state.categoryPickerOpen);
@@ -61,6 +62,7 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
   const setTransactionType = useQuickAddStore((state) => state.setTransactionType);
   const setSelectedCategory = useQuickAddStore((state) => state.setSelectedCategory);
   const setSelectedAccountId = useQuickAddStore((state) => state.setSelectedAccountId);
+  const setSelectedToAccountId = useQuickAddStore((state) => state.setSelectedToAccountId);
   const setSelectedDate = useQuickAddStore((state) => state.setSelectedDate);
   const setNote = useQuickAddStore((state) => state.setNote);
   const setCategoryPickerOpen = useQuickAddStore((state) => state.setCategoryPickerOpen);
@@ -119,6 +121,18 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
       return;
     }
 
+    // Validate transfer-specific fields
+    if (transactionType === 'transfer') {
+      if (!selectedToAccountId) {
+        toast.error('Please select a destination account');
+        return;
+      }
+      if (selectedAccountId === selectedToAccountId) {
+        toast.error('From and To accounts must be different');
+        return;
+      }
+    }
+
     setIsSaving(true);
 
     try {
@@ -132,6 +146,7 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
         amount: amountValue,
         categoryId: selectedCategory?.id || '',
         accountId: selectedAccountId,
+        toAccountId: transactionType === 'transfer' ? selectedToAccountId : undefined,
         date: selectedDate,
         note: note || undefined,
         allocationId,
@@ -287,38 +302,108 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
             );
           })}
 
-          {/* Account Selector */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Account</Label>
-            <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-              <SelectTrigger className="w-full h-auto py-3">
-                <SelectValue placeholder="Select account...">
-                  {selectedAccountId && (() => {
-                    const selectedAccount = accounts.find(a => a.id === selectedAccountId);
-                    return selectedAccount ? (
+          {/* Account Selector - Conditional based on transaction type */}
+          {transactionType === 'transfer' ? (
+            // Transfer: Show From Account and To Account
+            <>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">From Account</Label>
+                <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                  <SelectTrigger className="w-full h-auto py-3">
+                    <SelectValue placeholder="Select source account...">
+                      {selectedAccountId && (() => {
+                        const selectedAccount = accounts.find(a => a.id === selectedAccountId);
+                        return selectedAccount ? (
+                          <div className="flex items-center">
+                            <span className="text-2xl mr-3">{selectedAccount.icon || '💳'}</span>
+                            <span className="text-base">{selectedAccount.name}</span>
+                          </div>
+                        ) : null;
+                      })()}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        <div className="flex items-center">
+                          <span className="text-2xl mr-3">{account.icon || '💳'}</span>
+                          <div className="flex flex-col">
+                            <span className="text-base font-medium">{account.name}</span>
+                            <span className="text-xs text-gray-500 capitalize">{account.type.replace('_', ' ')}</span>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">To Account</Label>
+                <Select value={selectedToAccountId} onValueChange={setSelectedToAccountId}>
+                  <SelectTrigger className="w-full h-auto py-3">
+                    <SelectValue placeholder="Select destination account...">
+                      {selectedToAccountId && (() => {
+                        const selectedAccount = accounts.find(a => a.id === selectedToAccountId);
+                        return selectedAccount ? (
+                          <div className="flex items-center">
+                            <span className="text-2xl mr-3">{selectedAccount.icon || '💳'}</span>
+                            <span className="text-base">{selectedAccount.name}</span>
+                          </div>
+                        ) : null;
+                      })()}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        <div className="flex items-center">
+                          <span className="text-2xl mr-3">{account.icon || '💳'}</span>
+                          <div className="flex flex-col">
+                            <span className="text-base font-medium">{account.name}</span>
+                            <span className="text-xs text-gray-500 capitalize">{account.type.replace('_', ' ')}</span>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          ) : (
+            // Expense/Income: Show single Account selector
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Account</Label>
+              <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                <SelectTrigger className="w-full h-auto py-3">
+                  <SelectValue placeholder="Select account...">
+                    {selectedAccountId && (() => {
+                      const selectedAccount = accounts.find(a => a.id === selectedAccountId);
+                      return selectedAccount ? (
+                        <div className="flex items-center">
+                          <span className="text-2xl mr-3">{selectedAccount.icon || '💳'}</span>
+                          <span className="text-base">{selectedAccount.name}</span>
+                        </div>
+                      ) : null;
+                    })()}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((account) => (
+                    <SelectItem key={account.id} value={account.id}>
                       <div className="flex items-center">
-                        <span className="text-2xl mr-3">{selectedAccount.icon || '💳'}</span>
-                        <span className="text-base">{selectedAccount.name}</span>
+                        <span className="text-2xl mr-3">{account.icon || '💳'}</span>
+                        <div className="flex flex-col">
+                          <span className="text-base font-medium">{account.name}</span>
+                          <span className="text-xs text-gray-500 capitalize">{account.type.replace('_', ' ')}</span>
+                        </div>
                       </div>
-                    ) : null;
-                  })()}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {accounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id}>
-                    <div className="flex items-center">
-                      <span className="text-2xl mr-3">{account.icon || '💳'}</span>
-                      <div className="flex flex-col">
-                        <span className="text-base font-medium">{account.name}</span>
-                        <span className="text-xs text-gray-500 capitalize">{account.type.replace('_', ' ')}</span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Module Form Extensions - after-account position */}
           {getExtensionsForPosition('after-account').map((ext) => {

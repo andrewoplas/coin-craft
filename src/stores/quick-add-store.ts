@@ -12,6 +12,7 @@ type QuickAddState = {
   transactionType: TransactionType;
   selectedCategory: Category | null;
   selectedAccountId: string;
+  selectedToAccountId: string; // for transfers only
   selectedDate: string; // YYYY-MM-DD format
   note: string;
 
@@ -33,6 +34,7 @@ type QuickAddActions = {
   setTransactionType: (type: TransactionType) => void;
   setSelectedCategory: (category: Category | null) => void;
   setSelectedAccountId: (accountId: string) => void;
+  setSelectedToAccountId: (accountId: string) => void;
   setSelectedDate: (date: string) => void;
   setNote: (note: string) => void;
 
@@ -55,6 +57,7 @@ const initialState: QuickAddState = {
   transactionType: 'expense',
   selectedCategory: null,
   selectedAccountId: '',
+  selectedToAccountId: '',
   selectedDate: getTodayString(),
   note: '',
   formExtensionValues: {},
@@ -78,6 +81,7 @@ export const useQuickAddStore = create<QuickAddStore>((set) => ({
   }),
   setSelectedCategory: (category) => set({ selectedCategory: category }),
   setSelectedAccountId: (accountId) => set({ selectedAccountId: accountId }),
+  setSelectedToAccountId: (accountId) => set({ selectedToAccountId: accountId }),
   setSelectedDate: (date) => set({ selectedDate: date }),
   setNote: (note) => set({ note }),
 
@@ -100,6 +104,7 @@ export const useQuickAddStore = create<QuickAddStore>((set) => ({
     transactionType: 'expense',
     selectedCategory: null,
     selectedAccountId: '',
+    selectedToAccountId: '',
     selectedDate: getTodayString(),
     note: '',
     formExtensionValues: {},

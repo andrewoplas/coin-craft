@@ -89,21 +89,21 @@
 
 ## Sprint 3: Core — Quick Add Transaction
 - [x] Create Quick Add modal component (`components/transactions/quick-add-modal.tsx`)
-- [~] Amount input: large display, auto-focused, numeric input
-- [ ] Type toggle: Expense (red) | Income (green) | Transfer (blue) — defaults to Expense
-- [ ] Category picker: grid of emoji icons grouped by main category. Tap main → show subcategories
-- [ ] Account selector: dropdown showing account name + balance
-- [ ] For Transfer type: show "From Account" and "To Account" selectors
-- [ ] Date picker: defaults to today, calendar popup for past dates
-- [ ] Note: optional text field
-- [ ] **Module form extensions:** After category, check active modules for form extensions and render them:
+- [x] Amount input: large display, auto-focused, numeric input
+- [x] Type toggle: Expense (red) | Income (green) | Transfer (blue) — defaults to Expense
+- [x] Category picker: grid of emoji icons grouped by main category. Tap main → show subcategories
+- [x] Account selector: dropdown showing account name + balance
+- [x] For Transfer type: show "From Account" and "To Account" selectors
+- [x] Date picker: defaults to today, calendar popup for past dates
+- [x] Note: optional text field
+- [x] **Module form extensions:** After category, check active modules for form extensions and render them:
   - Envelope module active → show "Which wallet?" picker (auto-select if category is linked to an envelope)
   - Goals module active + income type → show "Allocate to goal?" optional step
-- [ ] Create server action: `createTransaction` in `server/actions/transactions.ts`
-- [ ] Transaction creation handles: insert record, update account balances, create allocation_transaction if envelope/goal selected, update streak
-- [ ] Save → success toast with celebration micro-animation → close modal
-- [ ] Quick Add store (Zustand) to manage modal open/close state globally
-- [ ] Verify: Can create expense, income, and transfer. Module extensions appear when modules are active.
+- [x] Create server action: `createTransaction` in `server/actions/transactions.ts`
+- [x] Transaction creation handles: insert record, update account balances, create allocation_transaction if envelope/goal selected, update streak
+- [x] Save → success toast with celebration micro-animation → close modal
+- [x] Quick Add store (Zustand) to manage modal open/close state globally
+- [x] Verify: Can create expense, income, and transfer. Module extensions appear when modules are active.
 
 **Acceptance:** `npm run check` passes with zero errors. Quick Add works end-to-end. Module form extensions inject correctly. Data persists. Under 5 seconds for a basic expense.
 

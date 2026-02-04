@@ -3,6 +3,7 @@
 import type { TransactionWithRelations } from '@/server/queries/transactions';
 import { Badge } from '@/components/ui/badge';
 import { useQuickAddStore } from '@/stores/quick-add-store';
+import { DeleteTransactionDialog } from './delete-transaction-dialog';
 
 type TransactionRowProps = {
   transaction: TransactionWithRelations;
@@ -50,20 +51,27 @@ export function TransactionRow({ transaction }: TransactionRowProps) {
             )}
           </div>
         </div>
-        <div className="text-right">
-          <p
-            className={`font-semibold ${
-              transaction.type === 'expense'
-                ? 'text-red-600'
-                : transaction.type === 'income'
-                ? 'text-green-600'
-                : 'text-indigo-600'
-            }`}
-          >
-            {transaction.type === 'expense' ? '-' : '+'}₱
-            {(transaction.amount / 100).toFixed(2)}
-          </p>
-          <p className="text-sm text-gray-500">{transaction.account.name}</p>
+        <div className="flex items-center gap-2">
+          <div className="text-right">
+            <p
+              className={`font-semibold ${
+                transaction.type === 'expense'
+                  ? 'text-red-600'
+                  : transaction.type === 'income'
+                  ? 'text-green-600'
+                  : 'text-indigo-600'
+              }`}
+            >
+              {transaction.type === 'expense' ? '-' : '+'}₱
+              {(transaction.amount / 100).toFixed(2)}
+            </p>
+            <p className="text-sm text-gray-500">{transaction.account.name}</p>
+          </div>
+          <DeleteTransactionDialog
+            transactionId={transaction.id}
+            transactionAmount={`${transaction.type === 'expense' ? '-' : '+'}₱${(transaction.amount / 100).toFixed(2)}`}
+            categoryName={transaction.category.name}
+          />
         </div>
       </div>
     </div>

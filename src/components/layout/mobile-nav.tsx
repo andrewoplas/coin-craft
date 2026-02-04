@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Receipt, Plus, BarChart3, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { type ModuleRoute } from '@/modules/types';
+import { useQuickAddStore } from '@/stores/quick-add-store';
 
 type MobileNavProps = {
   routes: ModuleRoute[];
@@ -14,6 +15,7 @@ type MobileNavProps = {
 export function MobileNav({ routes, accentColor = '#3B82F6' }: MobileNavProps) {
   const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
+  const openQuickAdd = useQuickAddStore((state) => state.open);
 
   // Primary routes for bottom nav
   const primaryRoutes = [
@@ -60,8 +62,10 @@ export function MobileNav({ routes, accentColor = '#3B82F6' }: MobileNavProps) {
 
           {/* Quick Add Button */}
           <button
+            onClick={openQuickAdd}
             className="flex flex-col items-center gap-1 py-2 px-4 -mt-4"
             style={{ color: accentColor }}
+            aria-label="Quick Add Transaction"
           >
             <div
               className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"

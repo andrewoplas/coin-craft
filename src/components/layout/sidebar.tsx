@@ -13,9 +13,11 @@ import {
   Settings,
   X,
   Menu,
+  Plus,
 } from 'lucide-react';
 import { type ModuleRoute } from '@/modules/types';
 import { useState } from 'react';
+import { useQuickAddStore } from '@/stores/quick-add-store';
 
 const iconMap = {
   LayoutDashboard,
@@ -36,6 +38,7 @@ type SidebarProps = {
 export function Sidebar({ routes, accentColor = '#3B82F6' }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const openQuickAdd = useQuickAddStore((state) => state.open);
 
   return (
     <>
@@ -57,6 +60,18 @@ export function Sidebar({ routes, accentColor = '#3B82F6' }: SidebarProps) {
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
           >
             {isCollapsed ? <Menu size={20} /> : <X size={20} />}
+          </button>
+        </div>
+
+        <div className="p-2 border-b border-gray-200">
+          <button
+            onClick={openQuickAdd}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-white transition-all hover:opacity-90"
+            style={{ backgroundColor: accentColor }}
+            aria-label="Quick Add Transaction"
+          >
+            <Plus size={20} />
+            {!isCollapsed && <span>Quick Add</span>}
           </button>
         </div>
 

@@ -4,7 +4,7 @@ import type { CategoryWithSubcategories } from '@/server/queries/categories';
 import type { CategoryType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useEditCategoryStore } from '@/stores/edit-category-store';
-import { Pencil } from 'lucide-react';
+import { Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { DeleteCategoryDialog } from './delete-category-dialog';
 import { HideCategoryDialog } from './hide-category-dialog';
 
@@ -30,6 +30,29 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
     parentName: string
   ) => {
     openForEdit(subcategory, parentName);
+  };
+
+  const handleMoveUp = async (
+    categoryId: string,
+    currentIndex: number,
+    isSubcategory: boolean = false
+  ) => {
+    if (currentIndex === 0) return;
+
+    // TODO: Call reorderCategories server action (Sprint 6 next task)
+    console.log('Move up:', categoryId, 'from index', currentIndex);
+  };
+
+  const handleMoveDown = async (
+    categoryId: string,
+    currentIndex: number,
+    totalCount: number,
+    isSubcategory: boolean = false
+  ) => {
+    if (currentIndex === totalCount - 1) return;
+
+    // TODO: Call reorderCategories server action (Sprint 6 next task)
+    console.log('Move down:', categoryId, 'from index', currentIndex);
   };
 
   if (categories.length === 0) {
@@ -67,7 +90,7 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="divide-y divide-gray-200">
-        {categories.map((category) => (
+        {categories.map((category, categoryIndex) => (
           <div key={category.id} className="p-4">
             {/* Main Category */}
             <div className="flex items-center gap-3">
@@ -100,6 +123,26 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                 <Button
                   variant="ghost"
                   size="icon"
+                  onClick={() => handleMoveUp(category.id, categoryIndex)}
+                  disabled={categoryIndex === 0}
+                  className="hover:bg-gray-100"
+                >
+                  <ChevronUp className="h-4 w-4 text-gray-600" />
+                  <span className="sr-only">Move up {category.name}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleMoveDown(category.id, categoryIndex, categories.length)}
+                  disabled={categoryIndex === categories.length - 1}
+                  className="hover:bg-gray-100"
+                >
+                  <ChevronDown className="h-4 w-4 text-gray-600" />
+                  <span className="sr-only">Move down {category.name}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => handleEditCategory(category)}
                   className="hover:bg-gray-100"
                 >
@@ -127,7 +170,7 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
             {/* Subcategories */}
             {category.subcategories.length > 0 && (
               <div className="ml-11 mt-3 space-y-2">
-                {category.subcategories.map((subcategory) => (
+                {category.subcategories.map((subcategory, subcategoryIndex) => (
                   <div key={subcategory.id} className="flex items-center gap-2 text-sm">
                     <span className="text-lg">{subcategory.icon || '📄'}</span>
                     <div className="flex-1">
@@ -145,6 +188,26 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                       />
                     )}
                     <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleMoveUp(subcategory.id, subcategoryIndex, true)}
+                        disabled={subcategoryIndex === 0}
+                        className="hover:bg-gray-100 h-6 w-6"
+                      >
+                        <ChevronUp className="h-3 w-3 text-gray-600" />
+                        <span className="sr-only">Move up {subcategory.name}</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleMoveDown(subcategory.id, subcategoryIndex, category.subcategories.length, true)}
+                        disabled={subcategoryIndex === category.subcategories.length - 1}
+                        className="hover:bg-gray-100 h-6 w-6"
+                      >
+                        <ChevronDown className="h-3 w-3 text-gray-600" />
+                        <span className="sr-only">Move down {subcategory.name}</span>
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

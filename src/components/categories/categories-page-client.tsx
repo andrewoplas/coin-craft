@@ -3,7 +3,9 @@
 import { CategoriesHeader } from './categories-header';
 import { CategoriesList } from './categories-list';
 import { AddCategoryModal } from './add-category-modal';
+import { EditCategoryModal } from './edit-category-modal';
 import { useAddCategoryStore } from '@/stores/add-category-store';
+import { useEditCategoryStore } from '@/stores/edit-category-store';
 import type { CategoryWithSubcategories } from '@/server/queries/categories';
 
 type CategoriesPageClientProps = {
@@ -15,8 +17,11 @@ export function CategoriesPageClient({
   expenseCategories,
   incomeCategories,
 }: CategoriesPageClientProps) {
-  const isOpen = useAddCategoryStore((state) => state.isOpen);
-  const close = useAddCategoryStore((state) => state.close);
+  const isAddOpen = useAddCategoryStore((state) => state.isOpen);
+  const closeAdd = useAddCategoryStore((state) => state.close);
+
+  const isEditOpen = useEditCategoryStore((state) => state.isOpen);
+  const closeEdit = useEditCategoryStore((state) => state.close);
 
   return (
     <>
@@ -40,10 +45,16 @@ export function CategoriesPageClient({
 
       {/* Add Category Modal */}
       <AddCategoryModal
-        open={isOpen}
-        onOpenChange={close}
+        open={isAddOpen}
+        onOpenChange={closeAdd}
         expenseCategories={expenseCategories}
         incomeCategories={incomeCategories}
+      />
+
+      {/* Edit Category Modal */}
+      <EditCategoryModal
+        open={isEditOpen}
+        onOpenChange={closeEdit}
       />
     </>
   );

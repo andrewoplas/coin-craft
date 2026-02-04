@@ -3,6 +3,8 @@
 import type { CategoryWithSubcategories } from '@/server/queries/categories';
 import type { CategoryType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { useEditCategoryStore } from '@/stores/edit-category-store';
+import { Pencil } from 'lucide-react';
 
 type CategoriesListProps = {
   categories: CategoryWithSubcategories[];
@@ -10,9 +12,22 @@ type CategoriesListProps = {
 };
 
 export function CategoriesList({ categories, type }: CategoriesListProps) {
+  const openForEdit = useEditCategoryStore((state) => state.openForEdit);
+
   const handleAddCategory = () => {
     // TODO: Open Add Category modal (Sprint 6 task 2)
     console.log('Add category clicked for type:', type);
+  };
+
+  const handleEditCategory = (category: CategoryWithSubcategories) => {
+    openForEdit(category);
+  };
+
+  const handleEditSubcategory = (
+    subcategory: CategoryWithSubcategories['subcategories'][number],
+    parentName: string
+  ) => {
+    openForEdit(subcategory, parentName);
   };
 
   if (categories.length === 0) {
@@ -69,6 +84,15 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                   style={{ backgroundColor: category.color }}
                 />
               )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleEditCategory(category)}
+                className="hover:bg-gray-100"
+              >
+                <Pencil className="h-4 w-4 text-gray-600" />
+                <span className="sr-only">Edit {category.name}</span>
+              </Button>
             </div>
 
             {/* Subcategories */}
@@ -77,13 +101,22 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                 {category.subcategories.map((subcategory) => (
                   <div key={subcategory.id} className="flex items-center gap-2 text-sm">
                     <span className="text-lg">{subcategory.icon || '📄'}</span>
-                    <span className="text-gray-700">{subcategory.name}</span>
+                    <span className="text-gray-700 flex-1">{subcategory.name}</span>
                     {subcategory.color && (
                       <div
                         className="w-3 h-3 rounded-full border border-gray-300"
                         style={{ backgroundColor: subcategory.color }}
                       />
                     )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditSubcategory(subcategory, category.name)}
+                      className="hover:bg-gray-100 h-6 w-6"
+                    >
+                      <Pencil className="h-3 w-3 text-gray-600" />
+                      <span className="sr-only">Edit {subcategory.name}</span>
+                    </Button>
                   </div>
                 ))}
               </div>

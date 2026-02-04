@@ -3,21 +3,31 @@
 import { Envelope } from '@/server/queries/allocations';
 import { EnvelopeCard } from './envelope-card';
 import { AddEnvelopeModal } from './add-envelope-modal';
+import { EditEnvelopeModal } from './edit-envelope-modal';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useAddEnvelopeStore } from '@/stores/add-envelope-store';
+import { useEditEnvelopeStore } from '@/stores/edit-envelope-store';
 
 type EnvelopesListProps = {
   envelopes: Envelope[];
 };
 
 export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
-  const isModalOpen = useAddEnvelopeStore((state) => state.isOpen);
-  const openModal = useAddEnvelopeStore((state) => state.open);
-  const closeModal = useAddEnvelopeStore((state) => state.close);
+  const isAddModalOpen = useAddEnvelopeStore((state) => state.isOpen);
+  const openAddModal = useAddEnvelopeStore((state) => state.open);
+  const closeAddModal = useAddEnvelopeStore((state) => state.close);
+
+  const isEditModalOpen = useEditEnvelopeStore((state) => state.isOpen);
+  const openEditModal = useEditEnvelopeStore((state) => state.openForEdit);
+  const closeEditModal = useEditEnvelopeStore((state) => state.close);
 
   const handleAddEnvelope = () => {
-    openModal();
+    openAddModal();
+  };
+
+  const handleEditEnvelope = (envelope: Envelope) => {
+    openEditModal(envelope);
   };
 
   // Empty state
@@ -60,12 +70,22 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
       {/* Envelope Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {envelopes.map((envelope) => (
-          <EnvelopeCard key={envelope.id} envelope={envelope} />
+          <EnvelopeCard
+            key={envelope.id}
+            envelope={envelope}
+            onEdit={() => handleEditEnvelope(envelope)}
+            onPause={() => {
+              // Pause handled within PauseEnvelopeDialog component
+            }}
+          />
         ))}
       </div>
 
       {/* Add Envelope Modal */}
-      <AddEnvelopeModal open={isModalOpen} onOpenChange={closeModal} />
+      <AddEnvelopeModal open={isAddModalOpen} onOpenChange={closeAddModal} />
+
+      {/* Edit Envelope Modal */}
+      <EditEnvelopeModal open={isEditModalOpen} onOpenChange={closeEditModal} />
     </div>
   );
 };

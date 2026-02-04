@@ -20,9 +20,13 @@ export type Goal = {
   id: string;
   name: string;
   icon: string | null;
+  color: string | null;
   currentAmount: number;
   targetAmount: number | null;
   deadline: string | null;
+  config: string | null;
+  createdAt: Date;
+  sortOrder: number;
 };
 
 /**
@@ -65,9 +69,13 @@ export async function getActiveGoals(userId: string): Promise<Goal[]> {
       id: allocations.id,
       name: allocations.name,
       icon: allocations.icon,
+      color: allocations.color,
       currentAmount: allocations.currentAmount,
       targetAmount: allocations.targetAmount,
       deadline: allocations.deadline,
+      config: allocations.config,
+      createdAt: allocations.createdAt,
+      sortOrder: allocations.sortOrder,
     })
     .from(allocations)
     .where(
@@ -76,7 +84,8 @@ export async function getActiveGoals(userId: string): Promise<Goal[]> {
         eq(allocations.moduleType, 'goal'),
         eq(allocations.isActive, true)
       )
-    );
+    )
+    .orderBy(allocations.sortOrder);
 
   return goals;
 }

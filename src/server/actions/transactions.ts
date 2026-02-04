@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { db } from '@/db';
 import { transactions, allocationTransactions, allocations, streaks } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { toCentavos } from '@/lib/format';
 
 export type CreateTransactionInput = {
@@ -93,11 +93,40 @@ export async function createTransaction(
       })
       .returning({ id: transactions.id });
 
+    // Determine allocation ID - use explicit or auto-assign based on linked category
+    let allocationId = input.allocationId;
+
+    // Auto-assignment: if no explicit allocation and this is an expense,
+    // check if category is linked to an active envelope
+    if (!allocationId && input.type === 'expense' && input.categoryId) {
+      const activeEnvelopes = await db
+        .select({
+          id: allocations.id,
+          categoryIds: allocations.categoryIds,
+        })
+        .from(allocations)
+        .where(
+          and(
+            eq(allocations.userId, user.id),
+            eq(allocations.moduleType, 'envelope'),
+            eq(allocations.isActive, true)
+          )
+        );
+
+      // Find envelope that has this category linked
+      for (const envelope of activeEnvelopes) {
+        if (envelope.categoryIds && envelope.categoryIds.includes(input.categoryId)) {
+          allocationId = envelope.id;
+          break;
+        }
+      }
+    }
+
     // Handle allocation linking (envelope or goal)
-    if (input.allocationId) {
+    if (allocationId) {
       await db.insert(allocationTransactions).values({
         transactionId: transaction.id,
-        allocationId: input.allocationId,
+        allocationId: allocationId,
         amount: amountInCentavos,
       });
 
@@ -105,7 +134,7 @@ export async function createTransaction(
       const [allocation] = await db
         .select()
         .from(allocations)
-        .where(eq(allocations.id, input.allocationId))
+        .where(eq(allocations.id, allocationId))
         .limit(1);
 
       if (allocation) {
@@ -113,7 +142,7 @@ export async function createTransaction(
         await db
           .update(allocations)
           .set({ currentAmount: newAmount })
-          .where(eq(allocations.id, input.allocationId));
+          .where(eq(allocations.id, allocationId));
       }
     }
 

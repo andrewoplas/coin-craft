@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getActiveEnvelopes } from '@/server/queries/allocations';
+import { checkAndResetEnvelopePeriods } from '@/server/actions/envelopes';
 import { EnvelopesList } from '@/components/envelopes/envelopes-list';
 
 export default async function EnvelopesPage() {
@@ -7,6 +8,9 @@ export default async function EnvelopesPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
+
+  // Check and reset envelope periods before fetching
+  await checkAndResetEnvelopePeriods(user.id);
 
   // Fetch active envelopes for this user
   const envelopes = await getActiveEnvelopes(user.id);

@@ -1,4 +1,12 @@
 import { type ModuleManifest } from '../types';
+import {
+  NetWorthWidget,
+  AccountsOverviewWidget,
+  RecentTransactionsWidget,
+  IncomeVsExpensesWidget,
+  SpendingByCategoryWidget,
+  CashFlowWidget,
+} from '@/components/dashboard/widgets';
 
 export const coreManifest: ModuleManifest = {
   id: 'core',
@@ -33,7 +41,56 @@ export const coreManifest: ModuleManifest = {
     },
   ],
 
-  dashboardWidgets: [],
+  dashboardWidgets: [
+    {
+      id: 'net-worth',
+      name: 'Net Worth',
+      description: 'Total balance across all accounts',
+      sizes: ['S', 'M'],
+      defaultSize: 'S',
+      component: NetWorthWidget,
+    },
+    {
+      id: 'accounts-overview',
+      name: 'Accounts Overview',
+      description: 'List of accounts with balances',
+      sizes: ['M', 'L'],
+      defaultSize: 'M',
+      component: AccountsOverviewWidget,
+    },
+    {
+      id: 'recent-transactions',
+      name: 'Recent Transactions',
+      description: 'Last 5-10 transactions',
+      sizes: ['M', 'L'],
+      defaultSize: 'M',
+      component: RecentTransactionsWidget,
+    },
+    {
+      id: 'income-vs-expenses',
+      name: 'Income vs Expenses',
+      description: 'Bar chart comparing income and expenses by month',
+      sizes: ['M', 'L'],
+      defaultSize: 'M',
+      component: IncomeVsExpensesWidget,
+    },
+    {
+      id: 'spending-by-category',
+      name: 'Spending by Category',
+      description: 'Pie chart of spending breakdown',
+      sizes: ['S', 'M', 'L'],
+      defaultSize: 'M',
+      component: SpendingByCategoryWidget,
+    },
+    {
+      id: 'cash-flow',
+      name: 'Cash Flow',
+      description: 'Income minus expenses for current period',
+      sizes: ['S', 'M'],
+      defaultSize: 'M',
+      component: CashFlowWidget,
+    },
+  ],
   formExtensions: [],
   settings: [],
   nudges: [],

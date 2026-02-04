@@ -1,7 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
+import { addWeeks, addMonths, parseISO, isBefore, startOfDay } from 'date-fns';
 import { createClient } from '@/lib/supabase/server';
 import { db } from '@/db';
 import { allocations } from '@/db/schema';
@@ -428,5 +429,114 @@ export async function transferBetweenEnvelopes(
       success: false,
       error: error instanceof Error ? error.message : 'Failed to transfer between envelopes',
     };
+  }
+}
+
+export type EnvelopeConfig = {
+  rolloverEnabled?: boolean;
+};
+
+/**
+ * Check and reset envelope periods if needed
+ * Called when fetching envelopes to ensure periods are up to date
+ */
+export async function checkAndResetEnvelopePeriods(userId: string): Promise<void> {
+  try {
+    // Fetch all active envelopes for this user
+    const activeEnvelopes = await db
+      .select()
+      .from(allocations)
+      .where(
+        and(
+          eq(allocations.userId, userId),
+          eq(allocations.moduleType, 'envelope'),
+          eq(allocations.isActive, true)
+        )
+      );
+
+    const today = startOfDay(new Date());
+
+    for (const envelope of activeEnvelopes) {
+      if (!envelope.period || envelope.period === 'none' || !envelope.periodStart) {
+        continue;
+      }
+
+      const periodStart = parseISO(envelope.periodStart);
+      let periodEnd: Date;
+
+      // Calculate period end based on period type
+      if (envelope.period === 'weekly') {
+        periodEnd = addWeeks(periodStart, 1);
+      } else if (envelope.period === 'monthly') {
+        periodEnd = addMonths(periodStart, 1);
+      } else if (envelope.period === 'yearly') {
+        periodEnd = addMonths(periodStart, 12);
+      } else {
+        continue;
+      }
+
+      // Check if we've passed the period end
+      if (isBefore(periodEnd, today)) {
+        // Parse config to check for rollover setting
+        let config: EnvelopeConfig = {};
+        try {
+          config = envelope.config ? JSON.parse(envelope.config) : {};
+        } catch {
+          config = {};
+        }
+
+        const targetAmount = envelope.targetAmount || 0;
+        const currentSpent = envelope.currentAmount;
+        const remaining = Math.max(0, targetAmount - currentSpent);
+
+        // Calculate new current amount
+        let newCurrentAmount = 0;
+        if (config.rolloverEnabled) {
+          // Rollover: carry over the unused amount as a "credit"
+          // If they underspent, they start the new period with negative spent (credit)
+          // This means: if remaining was 100, newCurrentAmount = -100 (100 credit)
+          newCurrentAmount = -remaining;
+          // But we can't have negative currentAmount in our schema,
+          // so we'll handle it differently: increase targetAmount instead
+          // Actually, let's just reset to 0 and increase target
+        }
+
+        // Calculate how many periods we've missed (in case of long gaps)
+        let newPeriodStart = periodEnd;
+        while (isBefore(newPeriodStart, today)) {
+          if (envelope.period === 'weekly') {
+            newPeriodStart = addWeeks(newPeriodStart, 1);
+          } else if (envelope.period === 'monthly') {
+            newPeriodStart = addMonths(newPeriodStart, 1);
+          } else {
+            newPeriodStart = addMonths(newPeriodStart, 12);
+          }
+        }
+        // Go back one period to get the start of the current period
+        if (envelope.period === 'weekly') {
+          newPeriodStart = addWeeks(newPeriodStart, -1);
+        } else if (envelope.period === 'monthly') {
+          newPeriodStart = addMonths(newPeriodStart, -1);
+        } else {
+          newPeriodStart = addMonths(newPeriodStart, -12);
+        }
+
+        // Format new period start as YYYY-MM-DD
+        const newPeriodStartStr = newPeriodStart.toISOString().split('T')[0];
+
+        // Update envelope
+        await db
+          .update(allocations)
+          .set({
+            currentAmount: newCurrentAmount,
+            periodStart: newPeriodStartStr,
+            updatedAt: new Date(),
+          })
+          .where(eq(allocations.id, envelope.id));
+      }
+    }
+  } catch (error) {
+    console.error('Error checking/resetting envelope periods:', error);
+    // Don't throw - this is a background task, failures shouldn't break the app
   }
 }

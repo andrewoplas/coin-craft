@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { getActiveEnvelopes, getActiveGoals } from '@/server/queries/allocations';
+import { checkAndResetEnvelopePeriods } from '@/server/actions/envelopes';
 
 export type ActionResult<T> =
   | { success: true; data: T }
@@ -9,6 +10,7 @@ export type ActionResult<T> =
 
 /**
  * Server action to fetch active envelopes for the current user
+ * Also checks and resets envelope periods if needed
  */
 export async function fetchActiveEnvelopes() {
   const supabase = await createClient();
@@ -25,6 +27,9 @@ export async function fetchActiveEnvelopes() {
   }
 
   try {
+    // Check and reset envelope periods before fetching
+    await checkAndResetEnvelopePeriods(user.id);
+
     const envelopes = await getActiveEnvelopes(user.id);
     return {
       success: true,

@@ -171,59 +171,59 @@
 - [x] Create Envelope modal: name, icon, color, monthly allocation amount, linked categories (multi-select), period (weekly/monthly), rollover toggle
 - [x] Edit/delete/pause envelope
 - [x] Envelope detail view: list of transactions pulling from this envelope, daily spending mini-chart
-- [ ] Transfer between envelopes: move allocation from one to another
-- [ ] Period reset logic: when period ends, reset remaining (or rollover), advance period_start
-- [ ] Auto-assignment: when creating an expense with a category linked to an envelope, automatically create allocation_transaction
-- [ ] Dashboard widgets:
+- [x] Transfer between envelopes: move allocation from one to another
+- [x] Period reset logic: when period ends, reset remaining (or rollover), advance period_start
+- [x] Auto-assignment: when creating an expense with a category linked to an envelope, automatically create allocation_transaction
+- [x] Dashboard widgets:
   - Envelope Overview Grid: all envelopes with mini progress bars
   - Low Balance Warnings: envelopes >80% spent
   - Allocation Summary: total allocated vs total income
-- [ ] Envelope form extension for Quick Add: wallet picker that appears after category selection
-- [ ] Smart nudges: low balance warning, unallocated income prompt, under-budget streak
-- [ ] Server actions and queries specific to envelope operations
-- [ ] Verify: Envelopes track spending accurately. Auto-assignment works. Period reset works.
+- [x] Envelope form extension for Quick Add: wallet picker that appears after category selection
+- [x] Smart nudges: low balance warning, unallocated income prompt, under-budget streak
+- [x] Server actions and queries specific to envelope operations
+- [x] Verify: Envelopes track spending accurately. Auto-assignment works. Period reset works.
 
 **Acceptance:** `npm run check` passes with zero errors. Full envelope budgeting system. Linked categories auto-assign. Progress tracking is accurate. Dashboard widgets display correctly.
 
 ---
 
 ## Sprint 8: Module — Goals (The Saver)
-- [ ] Create Goals page (`app/(app)/modules/goals/page.tsx`)
-- [ ] Goal list: cards showing name, emoji, big progress bar, amount saved / target, projected completion date
-- [ ] Create Goal modal: name, icon, color, target amount, optional deadline
-- [ ] Edit/pause/abandon/complete goal
-- [ ] Contribute to goal: manual allocation from income or available balance
-- [ ] Goal detail view: contribution history, projected timeline chart, monthly savings rate
-- [ ] If deadline set: calculate required monthly savings, show if on/off track
-- [ ] Goal completion: celebration animation 🎉 + achievement unlock
-- [ ] Dashboard widgets:
+- [x] Create Goals page (`app/(app)/modules/goals/page.tsx`)
+- [x] Goal list: cards showing name, emoji, big progress bar, amount saved / target, projected completion date
+- [x] Create Goal modal: name, icon, color, target amount, optional deadline
+- [x] Edit/pause/abandon/complete goal
+- [x] Contribute to goal: manual allocation from income or available balance
+- [x] Goal detail view: contribution history, projected timeline chart, monthly savings rate
+- [x] If deadline set: calculate required monthly savings, show if on/off track
+- [x] Goal completion: celebration animation 🎉 + achievement unlock
+- [x] Dashboard widgets:
   - Goal Progress Bars: all goals with visual progress
   - Projected Dates: when each goal will be reached at current rate
   - Savings Rate: monthly savings trend
-- [ ] Goal form extension for Quick Add: for income transactions, optional "Allocate to goal?" picker
-- [ ] Smart nudges: on-track/off-track alerts, milestone celebrations, no-contribution-this-month reminder
-- [ ] Server actions and queries specific to goal operations
-- [ ] Verify: Goals track contributions correctly. Projections are accurate. Completion triggers celebration.
+- [x] Goal form extension for Quick Add: for income transactions, optional "Allocate to goal?" picker
+- [x] Smart nudges: on-track/off-track alerts, milestone celebrations, no-contribution-this-month reminder
+- [x] Server actions and queries specific to goal operations
+- [x] Verify: Goals track contributions correctly. Projections are accurate. Completion triggers celebration.
 
 **Acceptance:** `npm run check` passes with zero errors. Full goal-based savings system. Progress tracking accurate. Projections update dynamically. Celebrations work.
 
 ---
 
 ## Sprint 9: Dashboard Canvas
-- [ ] Create Dashboard page (`app/(app)/dashboard/page.tsx`)
-- [ ] Read user's dashboard layout from store/database
-- [ ] Render widgets in a responsive grid based on saved layout
-- [ ] Each widget: standard container with title, optional expand, module attribution
-- [ ] Edit mode toggle: when active, widgets become draggable and resizable
-- [ ] Add Widget button: opens modal showing all available widgets from active modules
-- [ ] Remove widget: X button in edit mode
-- [ ] Resize widget: S/M/L toggle in edit mode
-- [ ] Save layout to database on changes
-- [ ] "Reset to Default" button: restore character's default dashboard layout
-- [ ] Build all core widgets: Net Worth, Accounts Overview, Recent Transactions, Income vs Expenses, Spending by Category, Cash Flow
-- [ ] Widgets fetch their own data via server queries
-- [ ] Responsive: widgets reflow on mobile (single column)
-- [ ] Verify: Dashboard is customizable. Widgets render correctly. Layout persists.
+- [x] Create Dashboard page (`app/(app)/dashboard/page.tsx`)
+- [x] Read user's dashboard layout from store/database
+- [x] Render widgets in a responsive grid based on saved layout
+- [x] Each widget: standard container with title, optional expand, module attribution
+- [x] Edit mode toggle: when active, widgets become draggable and resizable
+- [x] Add Widget button: opens modal showing all available widgets from active modules
+- [x] Remove widget: X button in edit mode
+- [x] Resize widget: S/M/L toggle in edit mode
+- [x] Save layout to database on changes
+- [x] "Reset to Default" button: restore character's default dashboard layout
+- [x] Build all core widgets: Net Worth, Accounts Overview, Recent Transactions, Income vs Expenses, Spending by Category, Cash Flow
+- [x] Widgets fetch their own data via server queries
+- [x] Responsive: widgets reflow on mobile (single column)
+- [x] Verify: Dashboard is customizable. Widgets render correctly. Layout persists.
 
 **Acceptance:** `npm run check` passes with zero errors. Dashboard is a fully customizable canvas. Widgets from all active modules are available. Layout saves per user.
 

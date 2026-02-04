@@ -1,13 +1,20 @@
-export default function GoalsPage() {
+import { createClient } from '@/lib/supabase/server';
+import { getActiveGoals } from '@/server/queries/allocations';
+import { GoalsList } from '@/components/goals/goals-list';
+
+export default async function GoalsPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  // Fetch active goals for this user
+  const goals = await getActiveGoals(user.id);
+
   return (
     <div className="p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Goals 🎯</h1>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-500 text-center py-8">
-            Goal-based savings coming in Sprint 8
-          </p>
-        </div>
+        <GoalsList goals={goals} />
       </div>
     </div>
   );

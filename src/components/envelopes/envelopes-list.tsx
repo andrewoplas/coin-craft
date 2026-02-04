@@ -43,10 +43,10 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
       <div className="text-center py-12">
         <div className="mb-4">
           <div className="text-6xl mb-4">📋</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-foreground mb-2">
             No envelopes yet
           </h3>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Create your first envelope to start budgeting your expenses into purpose-based wallets.
           </p>
         </div>
@@ -63,8 +63,8 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
       {/* Header with Add Button */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Envelopes</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Envelopes</h1>
+          <p className="text-muted-foreground mt-1">
             Manage your spending with purpose-based wallets
           </p>
         </div>

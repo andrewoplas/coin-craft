@@ -79,7 +79,7 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
 
   if (categories.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-12">
+      <div className="bg-card rounded-lg border p-12">
         <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto">
           {/* Illustration - emoji placeholder */}
           <div className="text-8xl mb-6">
@@ -87,21 +87,17 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
           </div>
 
           {/* Heading */}
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">
+          <h3 className="text-2xl font-bold text-foreground mb-3">
             No {type} categories yet
           </h3>
 
           {/* Subtext */}
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted-foreground mb-8">
             Add your first {type} category to start organizing your transactions
           </p>
 
           {/* CTA Button */}
-          <Button
-            onClick={handleAddCategory}
-            size="lg"
-            className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg"
-          >
+          <Button onClick={handleAddCategory} size="lg">
             Add Your First {type === 'expense' ? 'Expense' : 'Income'} Category
           </Button>
         </div>
@@ -110,16 +106,16 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="divide-y divide-gray-200">
+    <div className="bg-card rounded-lg border">
+      <div className="divide-y divide-border">
         {categories.map((category, categoryIndex) => (
           <div key={category.id} className="p-4">
             {/* Main Category */}
             <div className="flex items-center gap-3">
               <span className="text-2xl">{category.icon || '📁'}</span>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
+                <h3 className="font-semibold text-foreground">{category.name}</h3>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   {category.subcategories.length > 0 && (
                     <span>
                       {category.subcategories.length} {category.subcategories.length === 1 ? 'subcategory' : 'subcategories'}
@@ -137,7 +133,7 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
               </div>
               {category.color && (
                 <div
-                  className="w-4 h-4 rounded-full border border-gray-300"
+                  className="w-4 h-4 rounded-full border border-border"
                   style={{ backgroundColor: category.color }}
                 />
               )}
@@ -147,9 +143,9 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                   size="icon"
                   onClick={() => handleMoveUp(category.id, categoryIndex)}
                   disabled={categoryIndex === 0}
-                  className="hover:bg-gray-100"
+                  className="hover:bg-muted"
                 >
-                  <ChevronUp className="h-4 w-4 text-gray-600" />
+                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
                   <span className="sr-only">Move up {category.name}</span>
                 </Button>
                 <Button
@@ -157,18 +153,18 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                   size="icon"
                   onClick={() => handleMoveDown(category.id, categoryIndex, categories.length)}
                   disabled={categoryIndex === categories.length - 1}
-                  className="hover:bg-gray-100"
+                  className="hover:bg-muted"
                 >
-                  <ChevronDown className="h-4 w-4 text-gray-600" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   <span className="sr-only">Move down {category.name}</span>
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handleEditCategory(category)}
-                  className="hover:bg-gray-100"
+                  className="hover:bg-muted"
                 >
-                  <Pencil className="h-4 w-4 text-gray-600" />
+                  <Pencil className="h-4 w-4 text-muted-foreground" />
                   <span className="sr-only">Edit {category.name}</span>
                 </Button>
                 {category.isSystem ? (
@@ -196,16 +192,16 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                   <div key={subcategory.id} className="flex items-center gap-2 text-sm">
                     <span className="text-lg">{subcategory.icon || '📄'}</span>
                     <div className="flex-1">
-                      <span className="text-gray-700">{subcategory.name}</span>
+                      <span className="text-foreground">{subcategory.name}</span>
                       {subcategory.transactionCount !== undefined && subcategory.transactionCount > 0 && (
-                        <span className="text-xs text-gray-500 ml-2">
+                        <span className="text-xs text-muted-foreground ml-2">
                           ({subcategory.transactionCount} {subcategory.transactionCount === 1 ? 'transaction' : 'transactions'})
                         </span>
                       )}
                     </div>
                     {subcategory.color && (
                       <div
-                        className="w-3 h-3 rounded-full border border-gray-300"
+                        className="w-3 h-3 rounded-full border border-border"
                         style={{ backgroundColor: subcategory.color }}
                       />
                     )}
@@ -215,9 +211,9 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                         size="icon"
                         onClick={() => handleMoveUp(subcategory.id, subcategoryIndex, true)}
                         disabled={subcategoryIndex === 0}
-                        className="hover:bg-gray-100 h-6 w-6"
+                        className="hover:bg-muted h-6 w-6"
                       >
-                        <ChevronUp className="h-3 w-3 text-gray-600" />
+                        <ChevronUp className="h-3 w-3 text-muted-foreground" />
                         <span className="sr-only">Move up {subcategory.name}</span>
                       </Button>
                       <Button
@@ -225,18 +221,18 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
                         size="icon"
                         onClick={() => handleMoveDown(subcategory.id, subcategoryIndex, category.subcategories.length, true)}
                         disabled={subcategoryIndex === category.subcategories.length - 1}
-                        className="hover:bg-gray-100 h-6 w-6"
+                        className="hover:bg-muted h-6 w-6"
                       >
-                        <ChevronDown className="h-3 w-3 text-gray-600" />
+                        <ChevronDown className="h-3 w-3 text-muted-foreground" />
                         <span className="sr-only">Move down {subcategory.name}</span>
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEditSubcategory(subcategory, category.name)}
-                        className="hover:bg-gray-100 h-6 w-6"
+                        className="hover:bg-muted h-6 w-6"
                       >
-                        <Pencil className="h-3 w-3 text-gray-600" />
+                        <Pencil className="h-3 w-3 text-muted-foreground" />
                         <span className="sr-only">Edit {subcategory.name}</span>
                       </Button>
                       {subcategory.isSystem ? (

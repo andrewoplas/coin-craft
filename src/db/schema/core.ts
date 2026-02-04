@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, boolean, timestamp, date, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, integer, boolean, timestamp, date, pgEnum, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enums
@@ -20,7 +20,9 @@ export const accounts = pgTable('accounts', {
   isArchived: boolean('is_archived').notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => [
+  index('accounts_user_id_idx').on(table.userId),
+]);
 
 // Categories table
 export const categories = pgTable('categories', {
@@ -35,7 +37,11 @@ export const categories = pgTable('categories', {
   isSystem: boolean('is_system').notNull().default(false),
   isHidden: boolean('is_hidden').notNull().default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => [
+  index('categories_user_id_idx').on(table.userId),
+  index('categories_parent_id_idx').on(table.parentId),
+  index('categories_type_idx').on(table.type),
+]);
 
 // Transactions table
 export const transactions = pgTable('transactions', {
@@ -51,7 +57,14 @@ export const transactions = pgTable('transactions', {
   note: text('note'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+}, (table) => [
+  index('transactions_user_id_idx').on(table.userId),
+  index('transactions_user_id_date_idx').on(table.userId, table.date),
+  index('transactions_account_id_idx').on(table.accountId),
+  index('transactions_category_id_idx').on(table.categoryId),
+  index('transactions_type_idx').on(table.type),
+  index('transactions_date_idx').on(table.date),
+]);
 
 // Allocations table (flexible bucket for modules)
 export const allocations = pgTable('allocations', {
@@ -72,7 +85,11 @@ export const allocations = pgTable('allocations', {
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+}, (table) => [
+  index('allocations_user_id_idx').on(table.userId),
+  index('allocations_user_id_module_type_idx').on(table.userId, table.moduleType),
+  index('allocations_is_active_idx').on(table.isActive),
+]);
 
 // Allocation Transactions (links transactions to allocations)
 export const allocationTransactions = pgTable('allocation_transactions', {
@@ -81,7 +98,10 @@ export const allocationTransactions = pgTable('allocation_transactions', {
   allocationId: uuid('allocation_id').notNull().references(() => allocations.id, { onDelete: 'cascade' }),
   amount: integer('amount').notNull(), // in centavos
   createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (table) => [
+  index('allocation_transactions_transaction_id_idx').on(table.transactionId),
+  index('allocation_transactions_allocation_id_idx').on(table.allocationId),
+]);
 
 // Relations
 export const categoriesRelations = relations(categories, ({ one, many }) => ({

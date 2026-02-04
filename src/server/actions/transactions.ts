@@ -3,9 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { db } from '@/db';
-import { transactions, allocationTransactions, allocations, streaks } from '@/db/schema';
+import { transactions, allocationTransactions, allocations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { toCentavos } from '@/lib/format';
+import { updateStreak } from './streaks';
+import { checkAndAwardAchievements, type AwardedAchievement } from './achievements';
 
 export type CreateTransactionInput = {
   type: 'expense' | 'income' | 'transfer';
@@ -22,6 +24,7 @@ export type CreateTransactionResult = {
   success: boolean;
   transactionId?: string;
   error?: string;
+  newAchievements?: AwardedAchievement[];
 };
 
 export type UpdateTransactionInput = {
@@ -149,11 +152,14 @@ export async function createTransaction(
     // Update streak
     await updateStreak(user.id, input.date);
 
+    // Check and award achievements
+    const newAchievements = await checkAndAwardAchievements(user.id);
+
     // Revalidate to refresh server components
     revalidatePath('/dashboard');
     revalidatePath('/transactions');
 
-    return { success: true, transactionId: transaction.id };
+    return { success: true, transactionId: transaction.id, newAchievements };
   } catch (error) {
     console.error('Error creating transaction:', error);
     return {
@@ -408,69 +414,6 @@ export async function deleteTransaction(
       error: error instanceof Error ? error.message : 'Failed to delete transaction',
     };
   }
-}
-
-async function updateStreak(userId: string, transactionDate: string): Promise<void> {
-  // Get existing streak record
-  const [existingStreak] = await db
-    .select()
-    .from(streaks)
-    .where(eq(streaks.userId, userId))
-    .limit(1);
-
-  const today = new Date(transactionDate);
-  const todayString = transactionDate;
-
-  if (!existingStreak) {
-    // Create new streak record
-    await db.insert(streaks).values({
-      userId,
-      currentStreak: 1,
-      longestStreak: 1,
-      lastLogDate: todayString,
-    });
-    return;
-  }
-
-  // Check if already logged today
-  if (existingStreak.lastLogDate === todayString) {
-    return; // No update needed
-  }
-
-  // Calculate streak
-  let newCurrentStreak = existingStreak.currentStreak;
-
-  if (existingStreak.lastLogDate) {
-    const lastLog = new Date(existingStreak.lastLogDate);
-    const daysDiff = Math.floor(
-      (today.getTime() - lastLog.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if (daysDiff === 1) {
-      // Logged yesterday, increment streak
-      newCurrentStreak = existingStreak.currentStreak + 1;
-    } else if (daysDiff > 1) {
-      // Streak broken, reset to 1
-      newCurrentStreak = 1;
-    }
-    // daysDiff === 0 shouldn't happen (already handled above)
-  } else {
-    // First log ever
-    newCurrentStreak = 1;
-  }
-
-  // Update longest streak if necessary
-  const newLongestStreak = Math.max(newCurrentStreak, existingStreak.longestStreak);
-
-  // Update streak record
-  await db
-    .update(streaks)
-    .set({
-      currentStreak: newCurrentStreak,
-      longestStreak: newLongestStreak,
-      lastLogDate: todayString,
-    })
-    .where(eq(streaks.userId, userId));
 }
 
 /**

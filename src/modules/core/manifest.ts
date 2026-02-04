@@ -6,6 +6,8 @@ import {
   IncomeVsExpensesWidget,
   SpendingByCategoryWidget,
   CashFlowWidget,
+  StreakWidget,
+  HealthScoreWidget,
 } from '@/components/dashboard/widgets';
 
 export const coreManifest: ModuleManifest = {
@@ -89,6 +91,22 @@ export const coreManifest: ModuleManifest = {
       sizes: ['S', 'M'],
       defaultSize: 'M',
       component: CashFlowWidget,
+    },
+    {
+      id: 'streak',
+      name: 'Logging Streak',
+      description: 'Track your consecutive days of logging transactions',
+      sizes: ['S', 'M', 'L'],
+      defaultSize: 'S',
+      component: StreakWidget,
+    },
+    {
+      id: 'health-score',
+      name: 'Financial Health',
+      description: 'Your overall financial health score',
+      sizes: ['S', 'M', 'L'],
+      defaultSize: 'M',
+      component: HealthScoreWidget,
     },
   ],
   formExtensions: [],

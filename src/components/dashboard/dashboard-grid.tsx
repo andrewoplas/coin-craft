@@ -87,7 +87,7 @@ export function DashboardGrid({
   return (
     <div className="space-y-4">
       {/* Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
         <div>
           {characterName && (
             <p className="text-sm text-muted-foreground">
@@ -95,7 +95,7 @@ export function DashboardGrid({
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {isEditMode && (
             <>
               <Button
@@ -104,7 +104,8 @@ export function DashboardGrid({
                 onClick={openAddWidgetModal}
               >
                 <Plus className="h-4 w-4 mr-1" />
-                Add Widget
+                <span className="hidden sm:inline">Add Widget</span>
+                <span className="sm:hidden">Add</span>
               </Button>
               <Button
                 variant="outline"
@@ -112,7 +113,7 @@ export function DashboardGrid({
                 onClick={handleReset}
               >
                 <RotateCcw className="h-4 w-4 mr-1" />
-                Reset
+                <span className="hidden sm:inline">Reset</span>
               </Button>
               {isDirty && (
                 <Button

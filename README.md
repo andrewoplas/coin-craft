@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CoinCraft
 
-## Getting Started
+A modular expense tracker where users choose a financial "character" that shapes their experience, then customize by enabling/disabling modules.
 
-First, run the development server:
+## Features
+
+- **Character System**: Choose from 3 unique financial characters (Observer, Planner, Saver) each with different modules and focuses
+- **Module System**: Enable/disable features based on your needs
+- **Quick Add**: Log transactions in under 5 seconds
+- **Dashboard Canvas**: Customizable widget-based dashboard
+- **Envelope Budgeting**: For The Planner character
+- **Savings Goals**: For The Saver character
+- **Statistics**: Comprehensive charts and analytics
+- **Gamification**: Streaks, achievements, and health scores
+- **Dark Mode**: Full dark theme support
+- **Responsive**: Works on mobile, tablet, and desktop
+
+## Tech Stack
+
+- **Framework**: Next.js 14+ (App Router)
+- **Database**: Supabase (PostgreSQL)
+- **Auth**: Supabase Auth
+- **ORM**: Drizzle ORM
+- **Styling**: Tailwind CSS + shadcn/ui
+- **State**: Zustand
+- **Charts**: Recharts
+- **Dates**: date-fns
+
+## Prerequisites
+
+- Node.js 18+
+- npm or pnpm
+- Supabase account
+
+## Setup
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd coin-craft
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Set up Supabase
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to Project Settings > API to get your credentials
+
+### 4. Configure environment variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+DATABASE_URL=your_supabase_postgres_connection_string
+
+# App URL (for OG images)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### 5. Run database migrations
+
+```bash
+npx drizzle-kit migrate
+```
+
+### 6. Seed the database
+
+```bash
+npx tsx src/db/seed.ts
+```
+
+### 7. Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
+| `npm run check` | Run lint + typecheck + build |
+| `npm run test` | Run unit/integration tests |
+| `npm run test:e2e` | Run Playwright E2E tests |
+| `npx drizzle-kit generate` | Generate migration |
+| `npx drizzle-kit migrate` | Apply migrations |
+| `npx drizzle-kit studio` | Open Drizzle Studio |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+coin-craft/
+├── app/                    # Next.js App Router pages
+│   ├── (app)/             # Authenticated app routes
+│   ├── (auth)/            # Auth routes (login, signup, onboarding)
+│   └── api/               # API routes (for widgets)
+├── src/
+│   ├── components/        # React components
+│   ├── db/                # Database schema and migrations
+│   ├── lib/               # Utilities, types, constants
+│   ├── modules/           # Module system (envelope, goals, statistics)
+│   ├── server/            # Server actions and queries
+│   └── stores/            # Zustand stores
+├── public/                # Static assets
+└── drizzle/               # Generated migrations
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Characters
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Character | Focus | Modules |
+|-----------|-------|---------|
+| The Observer | Track everything | Core, Statistics |
+| The Planner | Budget with envelopes | Core, Statistics, Envelopes |
+| The Saver | Hit savings goals | Core, Statistics, Goals |
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Vercel (Recommended)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your code to GitHub
+2. Import the project in Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
+
+### Environment Variables for Production
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_production_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_anon_key
+DATABASE_URL=your_production_database_url
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+```
+
+## License
+
+MIT

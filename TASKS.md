@@ -247,55 +247,55 @@
 ---
 
 ## Sprint 11: Gamification
-- [ ] Streak tracking: detect consecutive days with at least one transaction logged
-- [ ] Streak counter displayed on dashboard (🔥 counter)
-- [ ] Streak milestones: small animation at 7 days, badge at 30 days, special badge at 100 days
-- [ ] Achievement system: define achievements in database (from SPEC.md table)
-- [ ] Check and award achievements after relevant actions (transaction created, month ended, goal completed, etc.)
-- [ ] Achievement notification: toast with badge icon when earned
-- [ ] Achievement gallery: viewable in Settings or profile
-- [ ] Financial Health Score: calculate 0-100 score based on base factors + active module factors (from SPEC.md)
-- [ ] Health score widget for dashboard: circular progress with color
-- [ ] Monthly recap: end-of-month summary screen with key stats, shareable card format
-- [ ] Verify: Streaks track correctly. Achievements trigger properly. Health score calculates accurately.
+- [x] Streak tracking: detect consecutive days with at least one transaction logged
+- [x] Streak counter displayed on dashboard (🔥 counter)
+- [x] Streak milestones: small animation at 7 days, badge at 30 days, special badge at 100 days
+- [x] Achievement system: define achievements in database (from SPEC.md table)
+- [x] Check and award achievements after relevant actions (transaction created, month ended, goal completed, etc.)
+- [x] Achievement notification: toast with badge icon when earned
+- [x] Achievement gallery: viewable in Settings or profile
+- [x] Financial Health Score: calculate 0-100 score based on base factors + active module factors (from SPEC.md)
+- [x] Health score widget for dashboard: circular progress with color
+- [x] Monthly recap: end-of-month summary screen with key stats, shareable card format
+- [x] Verify: Streaks track correctly. Achievements trigger properly. Health score calculates accurately.
 
-**Acceptance:** `npm run check` passes with zero errors. Gamification layer adds engagement. Streaks, achievements, health score all functional.
+**Acceptance:** ✅ `npm run check` passes with zero errors. Gamification layer adds engagement. Streaks, achievements, health score all functional.
 
 ---
 
 ## Sprint 12: Settings + Module Library
-- [ ] Settings page (`app/(app)/settings/page.tsx`)
-- [ ] **General settings:** display name, default currency, initial day of month, date format
-- [ ] **Character & Modules section:**
+- [x] Settings page (`app/(app)/settings/page.tsx`)
+- [x] **General settings:** display name, default currency, initial day of month, date format
+- [x] **Character & Modules section:**
   - Current character display with option to change
   - Module Library: browse all modules (grid of cards with name, description, icon, active toggle)
   - Enable/disable modules with confirmation
   - Per-module settings (e.g. envelope period, rollover behavior)
-- [ ] **Dashboard settings:** link to edit mode, reset to default layout
-- [ ] **Appearance:** Light / Dark / System theme toggle
-- [ ] **Data:** Export transactions as CSV, Delete account (danger zone)
-- [ ] Changing character: update profile, offer to reset dashboard, toggle modules accordingly
-- [ ] Module enable/disable: update user_modules, sidebar and dashboard recompose
-- [ ] Verify: All settings persist. Module toggling immediately affects UI. Theme switching works.
+- [x] **Dashboard settings:** link to edit mode, reset to default layout
+- [x] **Appearance:** Light / Dark / System theme toggle
+- [x] **Data:** Export transactions as CSV, Delete account (danger zone)
+- [x] Changing character: update profile, offer to reset dashboard, toggle modules accordingly
+- [x] Module enable/disable: update user_modules, sidebar and dashboard recompose
+- [x] Verify: All settings persist. Module toggling immediately affects UI. Theme switching works.
 
 **Acceptance:** `npm run check` passes with zero errors. Full settings management. Module library is browsable. Character switching works smoothly.
 
 ---
 
 ## Sprint 13: Polish + Deploy
-- [ ] Loading states: skeleton loaders for all data-fetching pages
-- [ ] Empty states: friendly messages/illustrations for empty lists (transactions, accounts, envelopes, goals)
-- [ ] Error handling: toast notifications for errors, form validation, server action error handling
-- [ ] Responsive polish: test all pages at 375px, 768px, 1024px, 1440px
-- [ ] Dark mode: verify all components and charts work in dark theme
-- [ ] Performance: optimize queries, add database indexes, lazy load heavy components
-- [ ] Smart nudges: implement in-app nudge banner on dashboard based on module rules
-- [ ] Favicon, meta tags, Open Graph for sharing
-- [ ] README.md with setup instructions
-- [ ] Deploy to Vercel
-- [ ] Run seed script on production Supabase
-- [ ] Verify all features in production
-- [ ] Verify: App is polished, responsive, performant, and live
+- [x] Loading states: skeleton loaders for all data-fetching pages
+- [x] Empty states: friendly messages/illustrations for empty lists (transactions, accounts, envelopes, goals)
+- [x] Error handling: toast notifications for errors, form validation, server action error handling
+- [x] Responsive polish: test all pages at 375px, 768px, 1024px, 1440px
+- [x] Dark mode: verify all components and charts work in dark theme
+- [x] Performance: optimize queries, add database indexes, lazy load heavy components
+- [x] Smart nudges: implement in-app nudge banner on dashboard based on module rules
+- [x] Favicon, meta tags, Open Graph for sharing
+- [x] README.md with setup instructions
+- [~] Deploy to Vercel (MANUAL: requires Vercel account + env vars)
+- [~] Run seed script on production Supabase (MANUAL: requires production credentials)
+- [~] Verify all features in production (MANUAL: requires live environment)
+- [ ] Verify: App is polished, responsive, performant, and live (MANUAL)
 
 **Acceptance:** `npm run check` passes with zero errors. CoinCraft Phase 1 is live and production-ready. All three character systems work. Gamification is active.
 

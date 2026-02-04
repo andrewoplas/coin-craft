@@ -105,12 +105,12 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
     currentSearch !== '';
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-      <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="bg-card rounded-lg border p-3 sm:p-4 mb-4 sm:mb-6">
+      <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
           {/* Type Filter */}
           <div>
-            <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
               Type
             </label>
             <Select value={currentType} onValueChange={(value) => updateFilter('type', value)}>
@@ -134,7 +134,7 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
 
           {/* Account Filter */}
           <div>
-            <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
               Account
             </label>
             <Select
@@ -158,7 +158,7 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
 
           {/* Category Filter */}
           <div>
-            <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
               Category
             </label>
             <Select
@@ -182,7 +182,7 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
 
           {/* Date Range: From */}
           <div>
-            <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
               From Date
             </label>
             <Popover>
@@ -213,7 +213,7 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
 
           {/* Date Range: To */}
           <div>
-            <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
               To Date
             </label>
             <Popover>
@@ -245,7 +245,7 @@ export const FilterBar = ({ categories, accounts }: FilterBarProps) => {
 
         {/* Search Input */}
         <div className="w-full">
-          <label className="text-xs font-medium text-gray-700 mb-1.5 block">
+          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
             Search notes
           </label>
           <div className="relative">

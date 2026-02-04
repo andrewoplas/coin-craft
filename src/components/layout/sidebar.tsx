@@ -44,26 +44,26 @@ export function Sidebar({ routes, accentColor = '#3B82F6' }: SidebarProps) {
     <>
       {/* Desktop sidebar */}
       <aside
-        className={`hidden md:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
+        className={`hidden md:flex flex-col bg-card border-r transition-all duration-300 ${
           isCollapsed ? 'w-16' : 'w-64'
         }`}
       >
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="p-4 border-b flex items-center justify-between">
           {!isCollapsed && (
             <Link href="/dashboard" className="flex items-center gap-2">
               <span className="text-2xl">✨</span>
-              <span className="text-xl font-bold text-gray-900">CoinCraft</span>
+              <span className="text-xl font-bold text-foreground">CoinCraft</span>
             </Link>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-muted rounded-lg transition-colors"
           >
             {isCollapsed ? <Menu size={20} /> : <X size={20} />}
           </button>
         </div>
 
-        <div className="p-2 border-b border-gray-200">
+        <div className="p-2 border-b">
           <button
             onClick={openQuickAdd}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-white transition-all hover:opacity-90"
@@ -87,7 +87,7 @@ export function Sidebar({ routes, accentColor = '#3B82F6' }: SidebarProps) {
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                   isActive
                     ? 'font-medium'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
                 style={
                   isActive
@@ -105,10 +105,10 @@ export function Sidebar({ routes, accentColor = '#3B82F6' }: SidebarProps) {
           })}
         </nav>
 
-        <div className="p-2 border-t border-gray-200">
+        <div className="p-2 border-t">
           <Link
             href="/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <Settings size={20} />
             {!isCollapsed && <span>Settings</span>}

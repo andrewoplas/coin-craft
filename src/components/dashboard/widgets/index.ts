@@ -4,3 +4,5 @@ export { RecentTransactionsWidget } from './recent-transactions-widget';
 export { IncomeVsExpensesWidget } from './income-vs-expenses-widget';
 export { SpendingByCategoryWidget } from './spending-by-category-widget';
 export { CashFlowWidget } from './cash-flow-widget';
+export { StreakWidget } from './streak-widget';
+export { HealthScoreWidget } from './health-score-widget';

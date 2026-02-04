@@ -1,12 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PeriodSelector } from './period-selector';
-import { SpendingTab } from './spending-tab';
-import { CashFlowTab } from './cash-flow-tab';
-import { TrendsTab } from './trends-tab';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Lazy load chart-heavy tabs for better initial load performance
+const SpendingTab = dynamic(() => import('./spending-tab').then(mod => ({ default: mod.SpendingTab })), {
+  loading: () => <TabLoadingSkeleton />,
+});
+
+const CashFlowTab = dynamic(() => import('./cash-flow-tab').then(mod => ({ default: mod.CashFlowTab })), {
+  loading: () => <TabLoadingSkeleton />,
+});
+
+const TrendsTab = dynamic(() => import('./trends-tab').then(mod => ({ default: mod.TrendsTab })), {
+  loading: () => <TabLoadingSkeleton />,
+});
+
+// Loading skeleton for tabs
+function TabLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="bg-card rounded-lg border p-4">
+        <Skeleton className="h-5 w-40 mb-4" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+        <Skeleton className="h-32" />
+      </div>
+    </div>
+  );
+}
 import type {
   CategorySpending,
   MonthlyCashFlow,

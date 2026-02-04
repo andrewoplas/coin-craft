@@ -1,8 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { getUserProfile, getUserActiveModules } from '@/server/queries/user';
+import { getUserNudges } from '@/server/queries/nudges';
 import { getActiveWidgets } from '@/modules/registry';
 import { CHARACTERS } from '@/lib/constants';
 import { DashboardGrid } from '@/components/dashboard';
+import { NudgeBanner } from '@/components/dashboard/nudge-banner';
 import { type WidgetInstance } from '@/lib/types';
 
 // Generate default layout based on character
@@ -124,8 +126,10 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
-  const profile = await getUserProfile(user.id);
-  const activeModuleIds = await getUserActiveModules(user.id);
+  const [profile, activeModuleIds] = await Promise.all([
+    getUserProfile(user.id),
+    getUserActiveModules(user.id),
+  ]);
 
   const character = profile?.characterId ? CHARACTERS[profile.characterId] : null;
   const characterName = character?.name || 'there';
@@ -136,12 +140,18 @@ export default async function DashboardPage() {
   // Get default layout for this character
   const defaultLayout = getDefaultLayout(profile?.characterId || null, activeModuleIds);
 
+  // Get smart nudges
+  const nudges = await getUserNudges(user.id, activeModuleIds);
+
   return (
     <div className="p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         </div>
+
+        {/* Smart Nudges Banner */}
+        {nudges.length > 0 && <NudgeBanner nudges={nudges} />}
 
         <DashboardGrid
           availableWidgets={availableWidgets}

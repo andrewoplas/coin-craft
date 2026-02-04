@@ -41,7 +41,7 @@ export function MobileNav({ routes, accentColor = '#3B82F6' }: MobileNavProps) {
   return (
     <>
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-inset-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t safe-area-inset-bottom">
         <div className="flex items-center justify-around px-4 py-2">
           {primaryRoutes.slice(0, 2).map((route) => {
             const Icon = route.icon;
@@ -105,18 +105,18 @@ export function MobileNav({ routes, accentColor = '#3B82F6' }: MobileNavProps) {
       {/* More drawer */}
       {showMore && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50"
+          className="md:hidden fixed inset-0 bg-black/50 z-50"
           onClick={() => setShowMore(false)}
         >
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto"
+            className="absolute bottom-0 left-0 right-0 bg-card rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">More</h3>
+              <h3 className="text-lg font-bold text-foreground">More</h3>
               <button
                 onClick={() => setShowMore(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 ×
               </button>
@@ -128,7 +128,7 @@ export function MobileNav({ routes, accentColor = '#3B82F6' }: MobileNavProps) {
                   key={route.path}
                   href={route.path}
                   onClick={() => setShowMore(false)}
-                  className="block px-4 py-3 hover:bg-gray-100 rounded-lg"
+                  className="block px-4 py-3 hover:bg-muted rounded-lg"
                 >
                   {route.label}
                 </Link>
@@ -136,7 +136,7 @@ export function MobileNav({ routes, accentColor = '#3B82F6' }: MobileNavProps) {
               <Link
                 href="/settings"
                 onClick={() => setShowMore(false)}
-                className="block px-4 py-3 hover:bg-gray-100 rounded-lg"
+                className="block px-4 py-3 hover:bg-muted rounded-lg"
               >
                 Settings
               </Link>

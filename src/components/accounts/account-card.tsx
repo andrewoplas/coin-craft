@@ -49,15 +49,15 @@ export function AccountCard({ account, onClick, onEdit, onArchive }: AccountCard
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+      className="bg-card rounded-lg border p-6 cursor-pointer hover:shadow-md transition-shadow"
       style={{ borderTop: `4px solid ${accentColor}` }}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="text-3xl">{account.icon || '💰'}</div>
           <div>
-            <h3 className="font-semibold text-gray-900">{account.name}</h3>
-            <p className="text-sm text-gray-500">{ACCOUNT_TYPE_LABELS[account.type]}</p>
+            <h3 className="font-semibold text-foreground">{account.name}</h3>
+            <p className="text-sm text-muted-foreground">{ACCOUNT_TYPE_LABELS[account.type]}</p>
           </div>
         </div>
 
@@ -88,8 +88,8 @@ export function AccountCard({ account, onClick, onEdit, onArchive }: AccountCard
       </div>
 
       <div className="mt-4">
-        <p className="text-sm text-gray-500 mb-1">Current Balance</p>
-        <p className={`text-2xl font-bold ${isNegative ? 'text-red-600' : 'text-gray-900'}`}>
+        <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
+        <p className={`text-2xl font-bold ${isNegative ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
           {formatPHP(account.currentBalance)}
         </p>
       </div>

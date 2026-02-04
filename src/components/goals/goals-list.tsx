@@ -50,13 +50,13 @@ export const GoalsList = ({ goals }: GoalsListProps) => {
       <>
         <div className="text-center py-12">
           <div className="mb-4">
-            <div className="w-24 h-24 mx-auto mb-4 bg-green-50 rounded-full flex items-center justify-center">
+            <div className="w-24 h-24 mx-auto mb-4 bg-green-500/10 rounded-full flex items-center justify-center">
               <Target className="w-12 h-12 text-green-500" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
               Start saving towards your dreams
             </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Create your first savings goal. Whether it&apos;s a vacation, emergency fund, or that gadget you&apos;ve been eyeing — every peso gets you closer.
             </p>
           </div>
@@ -75,8 +75,8 @@ export const GoalsList = ({ goals }: GoalsListProps) => {
       {/* Header with Add Button */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Goals</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Goals</h1>
+          <p className="text-muted-foreground mt-1">
             Track your savings progress towards your dreams
           </p>
         </div>
@@ -88,18 +88,18 @@ export const GoalsList = ({ goals }: GoalsListProps) => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <p className="text-sm text-gray-500 mb-1">Total Saved</p>
+        <div className="bg-card rounded-xl border p-4">
+          <p className="text-sm text-muted-foreground mb-1">Total Saved</p>
           <p className="text-2xl font-bold text-green-600">{formatPHP(totalSaved)}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <p className="text-sm text-gray-500 mb-1">Total Targets</p>
-          <p className="text-2xl font-bold text-gray-900">{formatPHP(totalTargets)}</p>
+        <div className="bg-card rounded-xl border p-4">
+          <p className="text-sm text-muted-foreground mb-1">Total Targets</p>
+          <p className="text-2xl font-bold text-foreground">{formatPHP(totalTargets)}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <p className="text-sm text-gray-500 mb-1">Goals Completed</p>
-          <p className="text-2xl font-bold text-gray-900">
-            {completedGoals} <span className="text-sm font-normal text-gray-500">of {goals.length}</span>
+        <div className="bg-card rounded-xl border p-4">
+          <p className="text-sm text-muted-foreground mb-1">Goals Completed</p>
+          <p className="text-2xl font-bold text-foreground">
+            {completedGoals} <span className="text-sm font-normal text-muted-foreground">of {goals.length}</span>
           </p>
         </div>
       </div>

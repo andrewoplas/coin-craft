@@ -32,7 +32,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { formatDateString } from '@/lib/format';
 import { useQuickAddStore } from '@/stores/quick-add-store';
 import { getActiveFormExtensions } from '@/modules/registry';
-import { createTransaction, updateTransaction } from '@/server/actions/transactions';
+import { createTransaction, updateTransaction, type CreateTransactionResult } from '@/server/actions/transactions';
 import { toast } from 'sonner';
 
 type QuickAddModalProps = {
@@ -182,6 +182,22 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
           duration: 3000,
         });
 
+        // Show achievement toasts for any newly earned achievements
+        if (!isEditMode) {
+          const createResult = result as CreateTransactionResult;
+          if (createResult.newAchievements && createResult.newAchievements.length > 0) {
+            // Delay each achievement toast to show them sequentially
+            createResult.newAchievements.forEach((achievement, index) => {
+              setTimeout(() => {
+                toast.success(`Achievement Unlocked!`, {
+                  description: `${achievement.icon} ${achievement.name} - ${achievement.description}`,
+                  duration: 5000,
+                });
+              }, 500 + (index * 800)); // Stagger by 800ms
+            });
+          }
+        }
+
         // Close modal (form reset handled by wrapper)
         onOpenChange(false);
       } else {
@@ -221,14 +237,14 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 sm:space-y-6 py-4">
           {/* Amount Input - Large display, auto-focused */}
           <div className="space-y-2">
             <Label htmlFor="amount" className="text-sm font-medium">
               Amount
             </Label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-bold text-gray-400">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl sm:text-3xl font-bold text-muted-foreground">
                 ₱
               </span>
               <Input
@@ -237,7 +253,7 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="text-4xl font-bold h-20 pl-12 text-center"
+                className="text-2xl sm:text-4xl font-bold h-16 sm:h-20 pl-10 sm:pl-12 text-center"
                 autoFocus
               />
             </div>

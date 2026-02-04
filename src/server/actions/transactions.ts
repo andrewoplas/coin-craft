@@ -41,6 +41,15 @@ export type UpdateTransactionResult = {
   error?: string;
 };
 
+export type DeleteTransactionInput = {
+  transactionId: string;
+};
+
+export type DeleteTransactionResult = {
+  success: boolean;
+  error?: string;
+};
+
 export async function createTransaction(
   input: CreateTransactionInput
 ): Promise<CreateTransactionResult> {
@@ -291,6 +300,83 @@ export async function updateTransaction(
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to update transaction',
+    };
+  }
+}
+
+export async function deleteTransaction(
+  input: DeleteTransactionInput
+): Promise<DeleteTransactionResult> {
+  try {
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    // Fetch existing transaction and verify ownership
+    const [existingTransaction] = await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.id, input.transactionId))
+      .limit(1);
+
+    if (!existingTransaction) {
+      return { success: false, error: 'Transaction not found' };
+    }
+
+    if (existingTransaction.userId !== user.id) {
+      return { success: false, error: 'Not authorized to delete this transaction' };
+    }
+
+    // Handle allocation removal if transaction has allocation link
+    const [existingAllocationLink] = await db
+      .select()
+      .from(allocationTransactions)
+      .where(eq(allocationTransactions.transactionId, input.transactionId))
+      .limit(1);
+
+    if (existingAllocationLink) {
+      // Subtract transaction amount from allocation
+      const [allocation] = await db
+        .select()
+        .from(allocations)
+        .where(eq(allocations.id, existingAllocationLink.allocationId))
+        .limit(1);
+
+      if (allocation) {
+        const newAmount = allocation.currentAmount - existingTransaction.amount;
+        await db
+          .update(allocations)
+          .set({ currentAmount: newAmount })
+          .where(eq(allocations.id, existingAllocationLink.allocationId));
+      }
+
+      // Delete allocation link
+      await db
+        .delete(allocationTransactions)
+        .where(eq(allocationTransactions.transactionId, input.transactionId));
+    }
+
+    // Delete transaction record
+    await db
+      .delete(transactions)
+      .where(eq(transactions.id, input.transactionId));
+
+    // Revalidate to refresh server components
+    revalidatePath('/dashboard');
+    revalidatePath('/transactions');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to delete transaction',
     };
   }
 }

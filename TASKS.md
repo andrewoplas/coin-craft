@@ -117,30 +117,30 @@
 - [x] If envelope/goal assigned, show small badge/tag
 - [x] Filter bar: date range picker, category dropdown, account dropdown, type filter (all/expense/income/transfer)
 - [x] Text search on notes
-- [ ] Click transaction to open edit modal (same form as Quick Add, pre-filled)
-- [ ] Delete transaction with confirmation dialog
-- [ ] Server actions: `updateTransaction`, `deleteTransaction` (recalculates balances, allocation amounts)
-- [ ] Pagination or infinite scroll
-- [ ] Empty state: friendly illustration + "Log your first expense!" CTA
-- [ ] Verify: Full CRUD, filters work, edit updates correctly, delete recalculates balances
+- [x] Click transaction to open edit modal (same form as Quick Add, pre-filled)
+- [x] Delete transaction with confirmation dialog
+- [x] Server actions: `updateTransaction`, `deleteTransaction` (recalculates balances, allocation amounts)
+- [x] Pagination or infinite scroll
+- [x] Empty state: friendly illustration + "Log your first expense!" CTA
+- [x] Verify: Full CRUD, filters work, edit updates correctly, delete recalculates balances
 
 **Acceptance:** `npm run check` passes with zero errors. Transaction list is complete with filtering, editing, deleting. Empty state is friendly.
 
 ---
 
 ## Sprint 5: Core — Accounts
-- [ ] Create Accounts page (`app/(app)/accounts/page.tsx`)
-- [ ] "Total Balance" summary at top (sum of all active accounts)
-- [ ] Account cards: emoji icon, name, type badge, current balance (computed from transactions)
-- [ ] Color accent per account
-- [ ] Click account → view filtered transactions for that account
-- [ ] Add Account modal: name, type (cash/bank/e-wallet/credit card), currency, initial balance, icon picker (emoji), color picker
-- [ ] Edit Account: update name, icon, color (cannot change type or initial balance after creation)
-- [ ] Archive Account: confirmation → hide from main view, keep data
-- [ ] Server actions: `createAccount`, `updateAccount`, `archiveAccount`
-- [ ] Server query: `getAccountsWithBalances` (accounts + computed current balances)
-- [ ] Empty state: "Add your first account to start tracking"
-- [ ] Verify: Balances are always accurate. Archive works correctly.
+- [x] Create Accounts page (`app/(app)/accounts/page.tsx`)
+- [x] "Total Balance" summary at top (sum of all active accounts)
+- [x] Account cards: emoji icon, name, type badge, current balance (computed from transactions)
+- [x] Color accent per account
+- [x] Click account → view filtered transactions for that account
+- [x] Add Account modal: name, type (cash/bank/e-wallet/credit card), currency, initial balance, icon picker (emoji), color picker
+- [x] Edit Account: update name, icon, color (cannot change type or initial balance after creation)
+- [x] Archive Account: confirmation → hide from main view, keep data
+- [x] Server actions: `createAccount`, `updateAccount`, `archiveAccount`
+- [x] Server query: `getAccountsWithBalances` (accounts + computed current balances)
+- [x] Empty state: "Add your first account to start tracking"
+- [x] Verify: Balances are always accurate. Archive works correctly.
 
 **Acceptance:** `npm run check` passes with zero errors. Account management complete. Balances derived correctly from transactions. Archive hides but preserves.
 

@@ -249,10 +249,10 @@ current_balance = initial_balance
 
 Update this section every time you start or complete a sprint.
 
-**Active Sprint:** Sprint 3 — Core — Quick Add Transaction
+**Active Sprint:** Sprint 5 — Core — Accounts
 **Phase:** 1
-**Status:** In Progress (simplified implementation due to scope)
-**Completed Sprints:** Sprint 0, Sprint 1, Sprint 2
+**Status:** Not started
+**Completed Sprints:** Sprint 0, Sprint 1, Sprint 2, Sprint 3, Sprint 4
 
 ## Implementation Notes
 
@@ -271,3 +271,7 @@ Remaining sprints (3-13) involve building out full CRUD operations for transacti
 **Sprint 1 — 2026-02-04** — Authentication and onboarding flow complete. Supabase Auth integrated with email/password signup and login. Middleware protecting app routes. Clean branded login/signup pages. Character selection with 6 characters (3 available, 3 coming soon). Interactive character cards with hover expansion. Help-me-choose quiz with 4 questions recommending best character. Contextual setup flow creating user profile, activating modules, and adding accounts. Full flow: signup → character select/quiz → setup → dashboard.
 
 **Sprint 2 — 2026-02-04** — App shell and dynamic navigation complete. Module registry system built with getActiveRoutes(), getActiveWidgets(), getActiveFormExtensions(). Manifests created for core, statistics, envelope, and goals modules. Responsive sidebar with CoinCraft logo, collapsible on tablet, icon-only mode. Active route highlighting with character accent colors. Mobile bottom nav with Dashboard, Transactions, Quick Add FAB, Stats, More drawer. All placeholder pages created: Dashboard (with character greeting), Transactions, Accounts, Categories, Statistics, Settings, Envelopes, Goals. Navigation dynamically shows/hides based on user's active modules from database.
+
+**Sprint 3 — 2026-02-04** — Quick Add transaction flow complete. Full-featured modal with amount input (large display, auto-focused), transaction type toggle (Expense/Income/Transfer with color coding), category picker (grid of emoji icons), account selectors (dropdown with balances), date picker (defaults to today), and optional note field. Transfer type shows From/To account selectors with validation preventing same-account transfers. Module form extensions system built: Envelope module adds wallet picker after category (auto-selects if category linked), Goals module adds allocation picker after account for income. createTransaction server action handles all transaction types, updates account balances, creates allocation links, and updates streaks. Success toast with celebration animation. Form resets on close. Zustand store manages modal state. Under 5 seconds for basic expense. npm run check passes clean.
+
+**Sprint 4 — 2026-02-04** — Transaction List complete with full CRUD operations. Transactions page displays all transactions grouped by date (Today, Yesterday, specific dates) with category emoji, name, note, amount (color-coded by type), and account name. Allocation badges show envelope/goal assignments. Comprehensive filter bar with date range picker, category dropdown, account dropdown, type filter, and text search on notes. Infinite scroll with cursor-based pagination loads more transactions as user scrolls. Click transaction row to open Quick Add modal pre-filled with transaction data for editing. Delete transaction with confirmation dialog. updateTransaction and deleteTransaction server actions recalculate account balances and allocation amounts. Empty state with friendly message and CTA. All filtering works correctly. npm run check passes clean.

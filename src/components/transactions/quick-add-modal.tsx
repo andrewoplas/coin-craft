@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, CalendarIcon } from 'lucide-react';
+import { X, CalendarIcon, Loader2, Sparkles } from 'lucide-react';
 import type { CategoryType } from '@/lib/types';
 import { CategoryPicker } from './category-picker';
 import type { CategoryWithSubcategories, Category } from '@/server/queries/categories';
@@ -32,6 +32,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { formatDateString } from '@/lib/format';
 import { useQuickAddStore } from '@/stores/quick-add-store';
 import { getActiveFormExtensions } from '@/modules/registry';
+import { createTransaction } from '@/server/actions/transactions';
+import { toast } from 'sonner';
 
 type QuickAddModalProps = {
   open: boolean;
@@ -42,6 +44,9 @@ type QuickAddModalProps = {
 };
 
 export function QuickAddModal({ open, onOpenChange, categories, accounts, activeModules }: QuickAddModalProps) {
+  // Local state for save loading
+  const [isSaving, setIsSaving] = useState(false);
+
   // Get state and actions from Zustand store
   const amount = useQuickAddStore((state) => state.amount);
   const transactionType = useQuickAddStore((state) => state.transactionType);
@@ -94,6 +99,67 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
 
   const handleCategorySelect = (category: Category) => {
     setSelectedCategory(category);
+  };
+
+  const handleSave = async () => {
+    // Validate required fields
+    const amountValue = parseFloat(amount);
+    if (!amount || isNaN(amountValue) || amountValue <= 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+
+    if (transactionType !== 'transfer' && !selectedCategory) {
+      toast.error('Please select a category');
+      return;
+    }
+
+    if (!selectedAccountId) {
+      toast.error('Please select an account');
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      // Get allocation ID from form extensions if present
+      const envelopeAllocationId = formExtensionValues['envelope-wallet-picker'] as string | undefined;
+      const goalAllocationId = formExtensionValues['goal-allocation-picker'] as string | undefined;
+      const allocationId = envelopeAllocationId || goalAllocationId || undefined;
+
+      const result = await createTransaction({
+        type: transactionType,
+        amount: amountValue,
+        categoryId: selectedCategory?.id || '',
+        accountId: selectedAccountId,
+        date: selectedDate,
+        note: note || undefined,
+        allocationId,
+      });
+
+      if (result.success) {
+        // Show success toast with celebration animation
+        toast.success('Transaction saved!', {
+          description: `${transactionType.charAt(0).toUpperCase() + transactionType.slice(1)} of ₱${amountValue.toFixed(2)} recorded`,
+          icon: <Sparkles className="h-4 w-4 text-green-600 animate-pulse" />,
+          duration: 3000,
+        });
+
+        // Close modal (form reset handled by wrapper)
+        onOpenChange(false);
+      } else {
+        toast.error('Failed to save transaction', {
+          description: result.error || 'Please try again',
+        });
+      }
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+      toast.error('Failed to save transaction', {
+        description: 'An unexpected error occurred',
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -341,11 +407,23 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
             variant="outline"
             className="flex-1"
             onClick={() => onOpenChange(false)}
+            disabled={isSaving}
           >
             Cancel
           </Button>
-          <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-            Save Transaction
+          <Button
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Save Transaction'
+            )}
           </Button>
         </div>
       </DialogContent>

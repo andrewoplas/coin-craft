@@ -5,6 +5,7 @@ import { getActiveRoutes } from '@/modules/registry';
 import { Sidebar } from '@/components/layout/sidebar';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { QuickAddWrapper } from '@/components/transactions/quick-add-wrapper';
+import { Toaster } from '@/components/ui/sonner';
 import { CHARACTERS } from '@/lib/constants';
 
 export default async function AppLayout({
@@ -39,6 +40,8 @@ export default async function AppLayout({
       <MobileNav routes={routes} accentColor={accentColor} />
 
       <QuickAddWrapper activeModules={activeModuleIds} />
+
+      <Toaster position="top-center" richColors />
     </div>
   );
 }

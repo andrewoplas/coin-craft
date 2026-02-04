@@ -32,7 +32,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { formatDateString } from '@/lib/format';
 import { useQuickAddStore } from '@/stores/quick-add-store';
 import { getActiveFormExtensions } from '@/modules/registry';
-import { createTransaction } from '@/server/actions/transactions';
+import { createTransaction, updateTransaction } from '@/server/actions/transactions';
 import { toast } from 'sonner';
 
 type QuickAddModalProps = {
@@ -48,6 +48,7 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
   const [isSaving, setIsSaving] = useState(false);
 
   // Get state and actions from Zustand store
+  const editingTransactionId = useQuickAddStore((state) => state.editingTransactionId);
   const amount = useQuickAddStore((state) => state.amount);
   const transactionType = useQuickAddStore((state) => state.transactionType);
   const selectedCategory = useQuickAddStore((state) => state.selectedCategory);
@@ -69,6 +70,9 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
   const setDatePickerOpen = useQuickAddStore((state) => state.setDatePickerOpen);
   const formExtensionValues = useQuickAddStore((state) => state.formExtensionValues);
   const setFormExtensionValue = useQuickAddStore((state) => state.setFormExtensionValue);
+
+  // Determine if in edit mode
+  const isEditMode = editingTransactionId !== null;
 
   // Get form extensions from active modules
   const allExtensions = useMemo(() => {
@@ -141,21 +145,39 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
       const goalAllocationId = formExtensionValues['goal-allocation-picker'] as string | undefined;
       const allocationId = envelopeAllocationId || goalAllocationId || undefined;
 
-      const result = await createTransaction({
-        type: transactionType,
-        amount: amountValue,
-        categoryId: selectedCategory?.id || '',
-        accountId: selectedAccountId,
-        toAccountId: transactionType === 'transfer' ? selectedToAccountId : undefined,
-        date: selectedDate,
-        note: note || undefined,
-        allocationId,
-      });
+      let result;
+
+      if (isEditMode) {
+        // Update existing transaction
+        result = await updateTransaction({
+          transactionId: editingTransactionId,
+          type: transactionType,
+          amount: amountValue,
+          categoryId: selectedCategory?.id || '',
+          accountId: selectedAccountId,
+          toAccountId: transactionType === 'transfer' ? selectedToAccountId : undefined,
+          date: selectedDate,
+          note: note || undefined,
+          allocationId,
+        });
+      } else {
+        // Create new transaction
+        result = await createTransaction({
+          type: transactionType,
+          amount: amountValue,
+          categoryId: selectedCategory?.id || '',
+          accountId: selectedAccountId,
+          toAccountId: transactionType === 'transfer' ? selectedToAccountId : undefined,
+          date: selectedDate,
+          note: note || undefined,
+          allocationId,
+        });
+      }
 
       if (result.success) {
         // Show success toast with celebration animation
-        toast.success('Transaction saved!', {
-          description: `${transactionType.charAt(0).toUpperCase() + transactionType.slice(1)} of ₱${amountValue.toFixed(2)} recorded`,
+        toast.success(isEditMode ? 'Transaction updated!' : 'Transaction saved!', {
+          description: `${transactionType.charAt(0).toUpperCase() + transactionType.slice(1)} of ₱${amountValue.toFixed(2)} ${isEditMode ? 'updated' : 'recorded'}`,
           icon: <Sparkles className="h-4 w-4 text-green-600 animate-pulse" />,
           duration: 3000,
         });
@@ -163,13 +185,13 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
         // Close modal (form reset handled by wrapper)
         onOpenChange(false);
       } else {
-        toast.error('Failed to save transaction', {
+        toast.error(isEditMode ? 'Failed to update transaction' : 'Failed to save transaction', {
           description: result.error || 'Please try again',
         });
       }
     } catch (error) {
       console.error('Error saving transaction:', error);
-      toast.error('Failed to save transaction', {
+      toast.error(isEditMode ? 'Failed to update transaction' : 'Failed to save transaction', {
         description: 'An unexpected error occurred',
       });
     } finally {
@@ -182,7 +204,9 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl font-bold">Quick Add</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">
+              {isEditMode ? 'Edit Transaction' : 'Quick Add'}
+            </DialogTitle>
             <Button
               variant="ghost"
               size="icon"
@@ -193,7 +217,7 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
             </Button>
           </div>
           <DialogDescription>
-            Add a new transaction quickly
+            {isEditMode ? 'Update transaction details' : 'Add a new transaction quickly'}
           </DialogDescription>
         </DialogHeader>
 
@@ -504,10 +528,10 @@ export function QuickAddModal({ open, onOpenChange, categories, accounts, active
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {isEditMode ? 'Updating...' : 'Saving...'}
               </>
             ) : (
-              'Save Transaction'
+              isEditMode ? 'Update Transaction' : 'Save Transaction'
             )}
           </Button>
         </div>

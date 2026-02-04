@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import type { TransactionType } from '@/lib/types';
 import type { Category } from '@/server/queries/categories';
+import type { TransactionWithRelations } from '@/server/queries/transactions';
 import { getTodayString } from '@/lib/format';
 
 type QuickAddState = {
   // Modal state
   isOpen: boolean;
+  editingTransactionId: string | null; // null = create mode, string = edit mode
 
   // Form values
   amount: string;
@@ -28,6 +30,7 @@ type QuickAddActions = {
   // Modal actions
   open: () => void;
   close: () => void;
+  openWithTransaction: (transaction: TransactionWithRelations) => void;
 
   // Form actions
   setAmount: (amount: string) => void;
@@ -53,6 +56,7 @@ type QuickAddStore = QuickAddState & QuickAddActions;
 
 const initialState: QuickAddState = {
   isOpen: false,
+  editingTransactionId: null,
   amount: '',
   transactionType: 'expense',
   selectedCategory: null,
@@ -71,6 +75,43 @@ export const useQuickAddStore = create<QuickAddStore>((set) => ({
   // Modal actions
   open: () => set({ isOpen: true }),
   close: () => set({ isOpen: false }),
+  openWithTransaction: (transaction) => {
+    // Pre-fill form with transaction data
+    const formExtensionValues: Record<string, unknown> = {};
+
+    // Pre-fill allocation if present (envelope or goal)
+    if (transaction.allocations.length > 0) {
+      const allocation = transaction.allocations[0]; // Take first allocation
+      if (allocation.moduleType === 'envelope') {
+        formExtensionValues['envelope-wallet-picker'] = allocation.id;
+      } else if (allocation.moduleType === 'goals') {
+        formExtensionValues['goal-allocation-picker'] = allocation.id;
+      }
+    }
+
+    set({
+      isOpen: true,
+      editingTransactionId: transaction.id,
+      amount: (transaction.amount / 100).toString(), // Convert centavos to pesos
+      transactionType: transaction.type,
+      selectedCategory: {
+        id: transaction.category.id,
+        name: transaction.category.name,
+        icon: transaction.category.icon,
+        color: transaction.category.color,
+        type: transaction.category.type,
+        parentId: null, // TransactionWithRelations doesn't include parentId, safe to set null
+        sortOrder: 0, // TransactionWithRelations doesn't include sortOrder, safe to set 0
+      },
+      selectedAccountId: transaction.account.id,
+      selectedToAccountId: transaction.toAccount?.id || '',
+      selectedDate: transaction.date,
+      note: transaction.note || '',
+      formExtensionValues,
+      categoryPickerOpen: false,
+      datePickerOpen: false,
+    });
+  },
 
   // Form actions
   setAmount: (amount) => set({ amount }),
@@ -100,6 +141,7 @@ export const useQuickAddStore = create<QuickAddStore>((set) => ({
 
   // Reset form to initial state
   reset: () => set({
+    editingTransactionId: null,
     amount: '',
     transactionType: 'expense',
     selectedCategory: null,

@@ -2,17 +2,23 @@
 
 import type { TransactionWithRelations } from '@/server/queries/transactions';
 import { Badge } from '@/components/ui/badge';
+import { useQuickAddStore } from '@/stores/quick-add-store';
 
 type TransactionRowProps = {
   transaction: TransactionWithRelations;
-  onClick?: () => void;
 };
 
-export function TransactionRow({ transaction, onClick }: TransactionRowProps) {
+export function TransactionRow({ transaction }: TransactionRowProps) {
+  const openWithTransaction = useQuickAddStore((state) => state.openWithTransaction);
+
+  const handleClick = () => {
+    openWithTransaction(transaction);
+  };
+
   return (
     <div
-      onClick={onClick}
-      className={`p-4 hover:bg-gray-50 ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={handleClick}
+      className="p-4 hover:bg-gray-50 cursor-pointer"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

@@ -2,11 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useAddCategoryStore } from '@/stores/add-category-store';
 
 export function CategoriesHeader() {
+  const open = useAddCategoryStore((state) => state.open);
+
   const handleAddCategory = () => {
-    // TODO: Open Add Category modal (Sprint 6 task 2)
-    console.log('Add category clicked');
+    open(); // Open modal with default type (expense)
   };
 
   return (

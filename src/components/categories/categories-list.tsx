@@ -7,6 +7,9 @@ import { useEditCategoryStore } from '@/stores/edit-category-store';
 import { Pencil, ChevronUp, ChevronDown } from 'lucide-react';
 import { DeleteCategoryDialog } from './delete-category-dialog';
 import { HideCategoryDialog } from './hide-category-dialog';
+import { reorderCategories } from '@/server/actions/categories';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 type CategoriesListProps = {
   categories: CategoryWithSubcategories[];
@@ -15,6 +18,7 @@ type CategoriesListProps = {
 
 export function CategoriesList({ categories, type }: CategoriesListProps) {
   const openForEdit = useEditCategoryStore((state) => state.openForEdit);
+  const router = useRouter();
 
   const handleAddCategory = () => {
     // TODO: Open Add Category modal (Sprint 6 task 2)
@@ -39,8 +43,17 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
   ) => {
     if (currentIndex === 0) return;
 
-    // TODO: Call reorderCategories server action (Sprint 6 next task)
-    console.log('Move up:', categoryId, 'from index', currentIndex);
+    const result = await reorderCategories({
+      categoryId,
+      direction: 'up',
+    });
+
+    if (result.success) {
+      router.refresh();
+      toast.success('Category reordered');
+    } else {
+      toast.error(result.error || 'Failed to reorder category');
+    }
   };
 
   const handleMoveDown = async (
@@ -51,8 +64,17 @@ export function CategoriesList({ categories, type }: CategoriesListProps) {
   ) => {
     if (currentIndex === totalCount - 1) return;
 
-    // TODO: Call reorderCategories server action (Sprint 6 next task)
-    console.log('Move down:', categoryId, 'from index', currentIndex);
+    const result = await reorderCategories({
+      categoryId,
+      direction: 'down',
+    });
+
+    if (result.success) {
+      router.refresh();
+      toast.success('Category reordered');
+    } else {
+      toast.error(result.error || 'Failed to reorder category');
+    }
   };
 
   if (categories.length === 0) {

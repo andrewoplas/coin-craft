@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { eq, and, or, count } from 'drizzle-orm';
+import { eq, and, or, count, isNull } from 'drizzle-orm';
 import { createClient } from '@/lib/supabase/server';
 import { getUserCategories } from '@/server/queries/categories';
 import { db } from '@/db';
@@ -52,6 +52,16 @@ export type DeleteCategoryInput = {
 };
 
 export type DeleteCategoryResult = {
+  success: boolean;
+  error?: string;
+};
+
+export type ReorderCategoryInput = {
+  categoryId: string;
+  direction: 'up' | 'down';
+};
+
+export type ReorderCategoryResult = {
   success: boolean;
   error?: string;
 };
@@ -419,6 +429,118 @@ export async function deleteCategory(
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to delete category',
+    };
+  }
+}
+
+/**
+ * Server action to reorder a category (move up or down)
+ * Swaps sortOrder with adjacent category in the same scope
+ * Main categories reorder within all main categories (parentId = null)
+ * Subcategories reorder within their parent category only
+ */
+export async function reorderCategories(
+  input: ReorderCategoryInput
+): Promise<ReorderCategoryResult> {
+  try {
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    // Fetch the category to reorder
+    const [categoryToMove] = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.id, input.categoryId))
+      .limit(1);
+
+    if (!categoryToMove) {
+      return { success: false, error: 'Category not found' };
+    }
+
+    // Verify user can modify this category (owns it or it's a system category)
+    if (categoryToMove.userId !== null && categoryToMove.userId !== user.id) {
+      return { success: false, error: 'Not authorized to reorder this category' };
+    }
+
+    // Fetch all categories in the same scope (same parent), ordered by sortOrder
+    const whereClause = categoryToMove.parentId === null
+      ? and(
+          or(isNull(categories.userId), eq(categories.userId, user.id)),
+          isNull(categories.parentId),
+          eq(categories.type, categoryToMove.type),
+          eq(categories.isHidden, false)
+        )
+      : and(
+          or(isNull(categories.userId), eq(categories.userId, user.id)),
+          eq(categories.parentId, categoryToMove.parentId),
+          eq(categories.isHidden, false)
+        );
+
+    const categoriesInScope = await db
+      .select()
+      .from(categories)
+      .where(whereClause)
+      .orderBy(categories.sortOrder);
+
+    // Find current index
+    const currentIndex = categoriesInScope.findIndex(
+      (cat) => cat.id === input.categoryId
+    );
+
+    if (currentIndex === -1) {
+      return { success: false, error: 'Category not found in scope' };
+    }
+
+    // Determine adjacent index
+    const adjacentIndex = input.direction === 'up'
+      ? currentIndex - 1
+      : currentIndex + 1;
+
+    // Validate can move in requested direction
+    if (adjacentIndex < 0) {
+      return { success: false, error: 'Cannot move up: already at the top' };
+    }
+
+    if (adjacentIndex >= categoriesInScope.length) {
+      return { success: false, error: 'Cannot move down: already at the bottom' };
+    }
+
+    const adjacentCategory = categoriesInScope[adjacentIndex];
+
+    if (!adjacentCategory) {
+      return { success: false, error: 'Adjacent category not found' };
+    }
+
+    // Swap sortOrder values
+    const tempSortOrder = categoryToMove.sortOrder;
+
+    await db
+      .update(categories)
+      .set({ sortOrder: adjacentCategory.sortOrder })
+      .where(eq(categories.id, categoryToMove.id));
+
+    await db
+      .update(categories)
+      .set({ sortOrder: tempSortOrder })
+      .where(eq(categories.id, adjacentCategory.id));
+
+    // Revalidate pages to refresh server components
+    revalidatePath('/categories');
+    revalidatePath('/transactions');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error reordering categories:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to reorder categories',
     };
   }
 }

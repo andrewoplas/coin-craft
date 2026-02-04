@@ -1,6 +1,7 @@
 'use client';
 
 import type { TransactionWithRelations } from '@/server/queries/transactions';
+import { Badge } from '@/components/ui/badge';
 
 type TransactionRowProps = {
   transaction: TransactionWithRelations;
@@ -20,6 +21,22 @@ export function TransactionRow({ transaction, onClick }: TransactionRowProps) {
             <p className="font-medium text-gray-900">
               {transaction.category.name}
             </p>
+            {transaction.allocations.length > 0 && (
+              <div className="flex gap-1 mt-1">
+                {transaction.allocations.map((allocation) => (
+                  <Badge
+                    key={allocation.id}
+                    className={
+                      allocation.moduleType === 'envelope'
+                        ? 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-100'
+                        : 'bg-green-100 text-green-700 border-green-200 hover:bg-green-100'
+                    }
+                  >
+                    {allocation.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
             {transaction.note && (
               <p className="text-sm text-gray-500 line-clamp-1">
                 {transaction.note}

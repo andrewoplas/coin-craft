@@ -147,20 +147,20 @@
 ---
 
 ## Sprint 6: Core — Categories
-- [ ] Create Categories page (`app/(app)/categories/page.tsx`)
-- [ ] Two sections: Expense Categories, Income Categories
-- [ ] Each main category: emoji, name, color swatch, expand to show subcategories
-- [ ] Add subcategory under any main category
-- [ ] Add new main category
-- [ ] Edit category: change name, emoji, color
-- [ ] Hide system categories (cannot delete), delete user-created categories
-- [ ] Show transaction count per category
-- [ ] Reorder categories (up/down arrows or drag)
-- [ ] Server actions: `createCategory`, `updateCategory`, `deleteCategory`, `hideCategory`, `reorderCategories`
-- [ ] Changes reflect immediately in Quick Add picker
-- [ ] Verify: Category tree is manageable. Changes propagate everywhere.
+- [x] Create Categories page (`app/(app)/categories/page.tsx`)
+- [x] Two sections: Expense Categories, Income Categories
+- [x] Each main category: emoji, name, color swatch, expand to show subcategories
+- [x] Add subcategory under any main category
+- [x] Add new main category
+- [x] Edit category: change name, emoji, color
+- [x] Hide system categories (cannot delete), delete user-created categories
+- [x] Show transaction count per category
+- [x] Reorder categories (up/down arrows or drag)
+- [x] Server actions: `createCategory`, `updateCategory`, `deleteCategory`, `hideCategory`, `reorderCategories`
+- [x] Changes reflect immediately in Quick Add picker
+- [x] Verify: Category tree is manageable. Changes propagate everywhere.
 
-**Acceptance:** `npm run check` passes with zero errors. Full category management. System categories protected. Custom categories supported.
+**Acceptance:** ✅ `npm run check` passes with zero errors. Full category management. System categories protected. Custom categories supported.
 
 ---
 

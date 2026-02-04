@@ -1,7 +1,8 @@
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getEnvelopeById, getEnvelopeTransactions } from '@/server/queries/envelopes';
-import { EnvelopeDetailHeader } from '@/components/envelopes/envelope-detail-header';
+import { getActiveEnvelopes } from '@/server/queries/allocations';
+import { EnvelopeDetailClient } from '@/components/envelopes/envelope-detail-client';
 import { EnvelopeTransactionsList } from '@/components/envelopes/envelope-transactions-list';
 import { DailySpendingChart } from '@/components/envelopes/daily-spending-chart';
 
@@ -35,9 +36,12 @@ export default async function EnvelopeDetailPage({ params }: PageProps) {
   // Fetch transactions for this envelope
   const transactions = await getEnvelopeTransactions(id, user.id);
 
+  // Fetch all envelopes for transfer modal
+  const allEnvelopes = await getActiveEnvelopes(user.id);
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
-      <EnvelopeDetailHeader envelope={envelope} />
+      <EnvelopeDetailClient envelope={envelope} allEnvelopes={allEnvelopes} />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {/* Daily spending chart - takes 2 columns on large screens */}

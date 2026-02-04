@@ -165,12 +165,12 @@
 ---
 
 ## Sprint 7: Module — Envelopes (The Planner)
-- [ ] Create Envelopes page (`app/(app)/modules/envelopes/page.tsx`)
-- [ ] Envelope list: cards showing name, emoji, progress bar (spent/allocated), remaining amount, period
-- [ ] Progress bar colors: green (<60%), amber (60-80%), red (>80%)
-- [ ] Create Envelope modal: name, icon, color, monthly allocation amount, linked categories (multi-select), period (weekly/monthly), rollover toggle
-- [ ] Edit/delete/pause envelope
-- [ ] Envelope detail view: list of transactions pulling from this envelope, daily spending mini-chart
+- [x] Create Envelopes page (`app/(app)/modules/envelopes/page.tsx`)
+- [x] Envelope list: cards showing name, emoji, progress bar (spent/allocated), remaining amount, period
+- [x] Progress bar colors: green (<60%), amber (60-80%), red (>80%)
+- [x] Create Envelope modal: name, icon, color, monthly allocation amount, linked categories (multi-select), period (weekly/monthly), rollover toggle
+- [x] Edit/delete/pause envelope
+- [x] Envelope detail view: list of transactions pulling from this envelope, daily spending mini-chart
 - [ ] Transfer between envelopes: move allocation from one to another
 - [ ] Period reset logic: when period ends, reset remaining (or rollover), advance period_start
 - [ ] Auto-assignment: when creating an expense with a category linked to an envelope, automatically create allocation_transaction

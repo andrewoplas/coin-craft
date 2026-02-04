@@ -46,6 +46,17 @@ export type PauseEnvelopeResult = {
   error?: string;
 };
 
+export type TransferEnvelopeInput = {
+  sourceEnvelopeId: string;
+  targetEnvelopeId: string;
+  amount: number; // in pesos
+};
+
+export type TransferEnvelopeResult = {
+  success: boolean;
+  error?: string;
+};
+
 /**
  * Server action to create a new envelope
  */
@@ -300,6 +311,122 @@ export async function pauseEnvelope(
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to pause envelope',
+    };
+  }
+}
+
+/**
+ * Server action to transfer budget allocation between envelopes
+ * Moves targetAmount from source envelope to target envelope
+ */
+export async function transferBetweenEnvelopes(
+  input: TransferEnvelopeInput
+): Promise<TransferEnvelopeResult> {
+  try {
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    // Validate inputs
+    if (!input.sourceEnvelopeId || !input.targetEnvelopeId) {
+      return { success: false, error: 'Source and target envelopes are required' };
+    }
+
+    if (input.sourceEnvelopeId === input.targetEnvelopeId) {
+      return { success: false, error: 'Cannot transfer to the same envelope' };
+    }
+
+    if (input.amount <= 0) {
+      return { success: false, error: 'Transfer amount must be greater than 0' };
+    }
+
+    // Convert amount to centavos
+    const amountInCentavos = toCentavos(input.amount);
+
+    // Fetch source envelope and verify ownership
+    const [sourceEnvelope] = await db
+      .select()
+      .from(allocations)
+      .where(eq(allocations.id, input.sourceEnvelopeId))
+      .limit(1);
+
+    if (!sourceEnvelope) {
+      return { success: false, error: 'Source envelope not found' };
+    }
+
+    if (sourceEnvelope.userId !== user.id) {
+      return { success: false, error: 'Not authorized to transfer from this envelope' };
+    }
+
+    if (sourceEnvelope.moduleType !== 'envelope') {
+      return { success: false, error: 'Source is not an envelope' };
+    }
+
+    if (!sourceEnvelope.isActive) {
+      return { success: false, error: 'Cannot transfer from a paused envelope' };
+    }
+
+    // Validate source has enough budget to transfer
+    const sourceTargetAmount = sourceEnvelope.targetAmount || 0;
+    if (sourceTargetAmount < amountInCentavos) {
+      return { success: false, error: 'Source envelope does not have enough budget to transfer' };
+    }
+
+    // Fetch target envelope and verify ownership
+    const [targetEnvelope] = await db
+      .select()
+      .from(allocations)
+      .where(eq(allocations.id, input.targetEnvelopeId))
+      .limit(1);
+
+    if (!targetEnvelope) {
+      return { success: false, error: 'Target envelope not found' };
+    }
+
+    if (targetEnvelope.userId !== user.id) {
+      return { success: false, error: 'Not authorized to transfer to this envelope' };
+    }
+
+    if (targetEnvelope.moduleType !== 'envelope') {
+      return { success: false, error: 'Target is not an envelope' };
+    }
+
+    if (!targetEnvelope.isActive) {
+      return { success: false, error: 'Cannot transfer to a paused envelope' };
+    }
+
+    // Perform the transfer: update both envelopes in a transaction
+    // Source: decrease targetAmount
+    const newSourceTargetAmount = sourceTargetAmount - amountInCentavos;
+    await db
+      .update(allocations)
+      .set({ targetAmount: newSourceTargetAmount })
+      .where(eq(allocations.id, input.sourceEnvelopeId));
+
+    // Target: increase targetAmount
+    const targetTargetAmount = targetEnvelope.targetAmount || 0;
+    const newTargetTargetAmount = targetTargetAmount + amountInCentavos;
+    await db
+      .update(allocations)
+      .set({ targetAmount: newTargetTargetAmount })
+      .where(eq(allocations.id, input.targetEnvelopeId));
+
+    // Revalidate pages to refresh server components
+    revalidatePath('/modules/envelopes');
+    revalidatePath('/dashboard');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error transferring between envelopes:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to transfer between envelopes',
     };
   }
 }

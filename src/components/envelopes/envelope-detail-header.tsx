@@ -1,10 +1,11 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowLeftRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { fromCentavos } from '@/lib/format';
+import { useTransferEnvelopeStore } from '@/stores/transfer-envelope-store';
 import type { EnvelopeDetail } from '@/server/queries/envelopes';
 
 type EnvelopeDetailHeaderProps = {
@@ -13,6 +14,7 @@ type EnvelopeDetailHeaderProps = {
 
 export function EnvelopeDetailHeader({ envelope }: EnvelopeDetailHeaderProps) {
   const router = useRouter();
+  const openTransferModal = useTransferEnvelopeStore((state) => state.open);
 
   const spent = envelope.currentAmount;
   const target = envelope.targetAmount || 0;
@@ -24,6 +26,10 @@ export function EnvelopeDetailHeader({ envelope }: EnvelopeDetailHeaderProps) {
     if (percent >= 80) return 'bg-red-500';
     if (percent >= 60) return 'bg-amber-500';
     return 'bg-green-500';
+  };
+
+  const handleTransfer = () => {
+    openTransferModal(envelope.id);
   };
 
   return (
@@ -61,6 +67,17 @@ export function EnvelopeDetailHeader({ envelope }: EnvelopeDetailHeaderProps) {
               )}
             </div>
           </div>
+
+          {/* Transfer button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleTransfer}
+            className="gap-2"
+          >
+            <ArrowLeftRight className="h-4 w-4" />
+            Transfer
+          </Button>
         </div>
 
         {/* Progress bar */}

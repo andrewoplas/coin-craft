@@ -5,6 +5,7 @@ import { Envelope } from '@/server/queries/allocations';
 import { EnvelopeCard } from './envelope-card';
 import { AddEnvelopeModal } from './add-envelope-modal';
 import { EditEnvelopeModal } from './edit-envelope-modal';
+import { TransferEnvelopeModal } from './transfer-envelope-modal';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useAddEnvelopeStore } from '@/stores/add-envelope-store';
@@ -93,6 +94,9 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
 
       {/* Edit Envelope Modal */}
       <EditEnvelopeModal open={isEditModalOpen} onOpenChange={closeEditModal} />
+
+      {/* Transfer Envelope Modal */}
+      <TransferEnvelopeModal envelopes={envelopes} />
     </div>
   );
 };

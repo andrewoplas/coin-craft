@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { createCategory } from '@/server/actions/categories';
 import { useAddCategoryStore } from '@/stores/add-category-store';
 import { toast } from 'sonner';
 import type { CategoryType } from '@/lib/types';
@@ -80,23 +81,22 @@ export function AddCategoryModal({
     setIsSaving(true);
 
     try {
-      // TODO: Call createCategory server action (will be created in next task)
-      // const result = await createCategory({
-      //   name: name.trim(),
-      //   type,
-      //   icon: icon || defaultIcon,
-      //   color: color || defaultColor,
-      //   parentId,
-      // });
+      // Call server action to create category
+      const result = await createCategory({
+        name: name.trim(),
+        type,
+        icon: icon || defaultIcon,
+        color: color || defaultColor,
+        parentId,
+      });
 
-      // if (!result.success) {
-      //   toast.error('Failed to create category', {
-      //     description: result.error || 'An unexpected error occurred.',
-      //   });
-      //   return;
-      // }
+      if (!result.success) {
+        toast.error('Failed to create category', {
+          description: result.error || 'An unexpected error occurred.',
+        });
+        return;
+      }
 
-      // Temporary success message until server action is created
       toast.success('Category created', {
         description: `${name} has been added to your categories.`,
       });

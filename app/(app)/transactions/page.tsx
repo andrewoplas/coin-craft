@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getUserTransactionsPaginated } from '@/server/queries/transactions';
-import { TransactionRow } from '@/components/transactions/transaction-row';
+import { TransactionList } from '@/components/transactions/transaction-list';
 
 export default async function TransactionsPage() {
   const supabase = await createClient();
@@ -17,21 +17,15 @@ export default async function TransactionsPage() {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Transactions</h1>
 
-        <div className="bg-white rounded-lg shadow">
-          {initialTransactions.length === 0 ? (
-            <div className="p-6">
-              <p className="text-gray-500 text-center py-8">
-                No transactions yet. Add your first transaction to get started!
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {initialTransactions.map((transaction) => (
-                <TransactionRow key={transaction.id} transaction={transaction} />
-              ))}
-            </div>
-          )}
-        </div>
+        {initialTransactions.length === 0 ? (
+          <div className="bg-white rounded-lg shadow p-6">
+            <p className="text-gray-500 text-center py-8">
+              No transactions yet. Add your first transaction to get started!
+            </p>
+          </div>
+        ) : (
+          <TransactionList transactions={initialTransactions} />
+        )}
 
         {hasMore && (
           <div className="mt-4 text-center">

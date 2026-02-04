@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import { Envelope } from '@/server/queries/allocations';
 import { EnvelopeCard } from './envelope-card';
 import { AddEnvelopeModal } from './add-envelope-modal';
@@ -14,6 +15,7 @@ type EnvelopesListProps = {
 };
 
 export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
+  const router = useRouter();
   const isAddModalOpen = useAddEnvelopeStore((state) => state.isOpen);
   const openAddModal = useAddEnvelopeStore((state) => state.open);
   const closeAddModal = useAddEnvelopeStore((state) => state.close);
@@ -28,6 +30,10 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
 
   const handleEditEnvelope = (envelope: Envelope) => {
     openEditModal(envelope);
+  };
+
+  const handleViewEnvelope = (envelopeId: string) => {
+    router.push(`/modules/envelopes/${envelopeId}`);
   };
 
   // Empty state
@@ -73,6 +79,7 @@ export const EnvelopesList = ({ envelopes }: EnvelopesListProps) => {
           <EnvelopeCard
             key={envelope.id}
             envelope={envelope}
+            onClick={() => handleViewEnvelope(envelope.id)}
             onEdit={() => handleEditEnvelope(envelope)}
             onPause={() => {
               // Pause handled within PauseEnvelopeDialog component

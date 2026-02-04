@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useEditCategoryStore } from '@/stores/edit-category-store';
+import { updateCategory } from '@/server/actions/categories';
 import { toast } from 'sonner';
 import type { CategoryType } from '@/lib/types';
 
@@ -58,15 +59,20 @@ export function EditCategoryModal({ open, onOpenChange }: EditCategoryModalProps
     setIsSaving(true);
 
     try {
-      // TODO: Call updateCategory server action (next task)
-      // const result = await updateCategory({
-      //   categoryId,
-      //   name: name.trim(),
-      //   icon: icon || undefined,
-      //   color: color || undefined,
-      // });
+      const result = await updateCategory({
+        categoryId,
+        name: name.trim(),
+        icon: icon || undefined,
+        color: color || undefined,
+      });
 
-      // Temporary success (replace with real server action in next task)
+      if (!result.success) {
+        toast.error('Failed to update category', {
+          description: result.error || 'An unexpected error occurred.',
+        });
+        return;
+      }
+
       toast.success('Category updated', {
         description: `${name} has been updated.`,
       });
